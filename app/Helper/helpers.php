@@ -13,4 +13,15 @@ function rules() {
    }
 
 
-   
+   function lang()
+   {
+    return  request()->segment(1) == 'ar' ? __('frontend.Arabic'):__('frontend.English');
+    
+   }
+   function flag()
+   {
+    return  request()->segment(1) == 'ar' ? asset('assets/frontend/img/arabic.png'):asset('assets/frontend/img/language.png');
+    
+   }
+
+ 

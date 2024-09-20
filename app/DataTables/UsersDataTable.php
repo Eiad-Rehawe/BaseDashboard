@@ -33,11 +33,14 @@ class UsersDataTable extends DataTable
            ->addColumn('ckeckbox',function($query){
             return '<input id="checkbox" name="id[]" type="checkbox" value="'.$query->id.'">';
            })
+           ->editColumn('gender',function($query){
+            return $query->gender();
+           })
             // ->editColumn('action',function($query){
             //     $row = $query;
             //     return view('backend.includes.buttons',compact('row'));
             // })
-            ->rawColumns(['ckeckbox','created_at','updated_at']);
+            ->rawColumns(['ckeckbox','created_at','updated_at','gender']);
     }
 
     /**
@@ -70,21 +73,22 @@ class UsersDataTable extends DataTable
                         Button::make('reload'),
                     ])
                     ->responsive(true);
-                    // ->language('ar');
+                   
     }
  
     public function getColumns(): array
     {
         return [
             Column::make('ckeckbox')->title('<input type="checkbox" class="checkbox"  >')->exportable(false)->printable(false)->orderable(false)->searchable(false),
-            Column::make('id'),
-            Column::make('name'),
-            // ->title(trans('table.name')),
-            Column::make('email'),
-            Column::make('address'),
-            Column::make('phone'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
+            // Column::make('id'),
+            Column::make('first_name')->title(trans('table.first_name')),
+            Column::make('last_name')->title(trans('table.last_name')),
+            Column::make('email')->title(trans('table.email')),
+            Column::make('address')->title(trans('table.address')),
+            Column::make('phone')->title(trans('table.phone')),
+            Column::make('gender')->title(trans('table.gender')),
+            Column::make('created_at')->title(trans('table.created_at')),
+            Column::make('updated_at')->title(trans('table.updated_at')),
             // Column::make('action'),
         ];
     }

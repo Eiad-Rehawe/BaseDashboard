@@ -38,14 +38,16 @@ $(document).on("click", "#warning", function (e) {
     var token = $("meta[name='csrf-token']").attr("content");
 
     Swal.fire({
-        title: "هل تريد  حذف السطر ؟?",
+        title: "Do You Want To Delete This row?",
         icon: "question",
         iconHtml: "؟",
-        confirmButtonText: "نعم",
-        cancelButtonText: "لا",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
         showCancelButton: true,
         showCloseButton: true,
-    }).then((result) => {
+    })
+    .then((result) => {
+       
         if (result.value) {
             $.ajax({
                 url: href,
@@ -55,6 +57,7 @@ $(document).on("click", "#warning", function (e) {
 
             })
                 .done(function (response) {
+                 
                     swal.fire(
                         response.title,
                         response.message,
@@ -65,9 +68,10 @@ $(document).on("click", "#warning", function (e) {
                         location.reload();
                     });
                 })
-                .fail(function() {
+                .fail(function(response) {
+                    
+                        swal.fire("Oops..."," Some Thing Went Wrong!","error");
 
-                    swal.fire("Oops...","يوجد خطأ ما","error");
 
                 });
                 // .error(function( data ) {
@@ -78,6 +82,7 @@ $(document).on("click", "#warning", function (e) {
         }
     });
 });
+
 
 
 //update cart paid
@@ -158,15 +163,15 @@ $(document).on("submit", ".submit", function (e) {
 //update status
 $(document).on("click", ".toggle-class", function (e) {
     e.preventDefault();
-    var token = $("meta[name='csrf_token']").attr("content");
+    var token = $("meta[name='csrf-token']").attr("content");
     var id = $(this).data("id");
     var href = $(this).attr("href");
     Swal.fire({
-        title:"هل تريد تعديل الحالة؟",
+        title:" Do You Want Update Status",
         icon: "question",
         iconHtml: "؟",
-        confirmButtonText: "نعم",
-        cancelButtonText: "لا",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
         showCancelButton: true,
         showCloseButton: true,
     }).then((result) => {
@@ -191,7 +196,7 @@ $(document).on("click", ".toggle-class", function (e) {
                     // $(".example").location.reload();
                 })
                 .fail(function () {
-                    swal.fire("Oops...","حدث خطأ ما", "error");
+                    swal.fire("Oops..."," Some Thing Went Wrong", "error");
                 });
         }
     });
@@ -208,11 +213,11 @@ $(document).on("click", ".multi-delete", function (e) {
     });
     console.log(id)
     Swal.fire({
-        title: "هل تريد حذف الأسطر المحددة؟ ",
+        title: "Do You want Delete These Records?",
         icon: "question",
         iconHtml: "؟",
-        confirmButtonText: "نعم",
-        cancelButtonText: "لا",
+        confirmButtonText: "yes",
+        cancelButtonText: "No",
         showCancelButton: true,
         showCloseButton: true,
     }).then((result) => {
@@ -241,7 +246,7 @@ $(document).on("click", ".multi-delete", function (e) {
             });
         } else {
 
-            swal.fire("Oops...","حدث خطأ ماg", "error");
+            swal.fire("Oops...","Some Thing Went Wrong!", "error");
         }
     });
 });
@@ -324,16 +329,17 @@ $('body').on('submit', 'form.submit-form', function(e) {
 
         },
      
-        error: function (err,data,response,jqXhr,xhr) {
+        error: function (err,data,response,jqXhr,xhr,error) {
+           console.log(data)
+           console.log(response)
            
            var elem = err.responseText;
-           
+          
            var ss = jQuery.parseJSON( '[' + elem + ']' );
-           
+        console.log(ss[0]['errors'])
            $.each(ss[0]['errors'], function (key, value) {
                
                   $(`#input-${key}`).text(value);
-
                 
 
            });
@@ -344,7 +350,6 @@ $('body').on('submit', 'form.submit-form', function(e) {
         complete: function() { form.parent().removeClass('load'); }
     });
 });
-
 
 
 

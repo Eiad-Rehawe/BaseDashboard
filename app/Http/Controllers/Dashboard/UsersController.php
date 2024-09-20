@@ -15,6 +15,9 @@ class UsersController extends BackendController
      */
     public function __construct(UsersDataTable $dataTable,User $user)
     {
+        // $this->middleware(['permission:Display Users|عرض المستخدمين'], ['only' => ['index']]);
+        // $this->middleware(['permission:Delete Multible'], ['only' => ['MultiDelete']]);
+
         parent::__construct($dataTable,$user);
     }
 

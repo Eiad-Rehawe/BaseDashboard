@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('table-name')
-الطلبات
+{{ __('sidebar.orders') }}
 @endsection
 @section('content')
 <div class="container-fluid" style="margin-left:0">
@@ -19,6 +19,7 @@
                       </ol>
                   </nav>
               </div>
+             
               <div class="col-3">
                   <div class="text-center mb-n5">
                       <img src="{{ asset('assets/dashboard/images/breadcrumb/ChatBc.png') }}" alt=""
@@ -28,6 +29,7 @@
           </div>
       </div>
   </div>
+ 
 <div class="card overflow-hidden invoice-application">
   <div class="d-flex align-items-center justify-content-between gap-3 m-3 d-lg-none">
     <button class="btn btn-primary d-flex" type="button" data-bs-toggle="offcanvas"
@@ -40,7 +42,7 @@
       <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
     </form>
   </div>
-  <div class="d-flex">
+  <div class="d-flex" style="direction:{{ app()->getLocale() == 'ar' ? 'rtl' :'ltr' }}">
     <div class="w-25 d-none d-lg-block border-end user-chat-box">
       <div class="p-3 border-bottom">
         <form class="position-relative">
@@ -62,8 +64,8 @@
               class="btn btn-primary round rounded-circle d-flex align-items-center justify-content-center" style="margin:10px">
               <i class="ti ti-user fs-6"></i>
             </div>
-            <div class="ms-3 d-inline-block w-75">
-              <h6 class="mb-0 invoice-customer">{{ $row->user->name }}</h6>
+            <div class="ms-3 d-inline-block w-75" style="text-align: {{ app()->getLocale() == 'ar' ? 'right':'left' }}">
+              <h6 class="mb-0 invoice-customer">{{ $row->user->first_name.$row->user->last_name }}</h6>
 
               <span class="fs-3 invoice-id text-truncate text-body-color d-block w-85">Id: #{{ $i }}</span>
               <span class="fs-3 invoice-date text-nowrap text-body-color d-block">{{ $row->order_date }}</span>
@@ -75,11 +77,13 @@
         </ul>
       </div>
     </div>
+    
     <div class="w-75 w-xs-100 chat-container">
       <div class="invoice-inner-part h-100">
+      
         <div class="invoiceing-box">
           <div class="invoice-header d-flex align-items-center border-bottom p-3">
-            <h4 class="font-medium text-uppercase mb-0">Invoice</h4>
+            <h4 class="font-medium text-uppercase mb-0">{{ __('table.Invoice') }}</h4>
             <div class="ms-auto">
               <h4 class="invoice-number"></h4>
             </div>
@@ -87,15 +91,17 @@
           <div class="p-3" id="custom-invoice">
             <?php $i=0;?>
             @foreach ($data as $row)
+            <?php $details = App\Models\OrderDetail::where('order_id',$row->id)->get() ?>
             <?php $i++ ?>
             <div class="invoice-{{ $row->id }}" id="printableArea">
               <div class="row pt-3">
                 <div class="col-md-12">
                   <div class="">
-                    <address>
+                    <address style="text-align: {{ app()->getLocale() == 'ar' ? 'right' :'left'}}">
                       
-                      <h6>&nbsp;من,</h6>
-                      <h6 class="fw-bold">&nbsp;{{ $row->user->name }}</h6>
+                      <h6>&nbsp;{{ __('table.from') }},</h6>
+                      <h6 class="fw-bold">{{ __('table.email') }}:&nbsp;{{ $row->user->email }}</h6>
+                      <h6 class="fw-bold">{{ __('table.phone') }}:&nbsp;{{ $row->user->phone }}</h6>
                       <p class="ms-1">
                        {{ $row->address_1 }}
                       </p>
@@ -105,35 +111,35 @@
                     </address>
                   </div>
                   <div class="text-end">
-                    <address>
-                      <h6>إلى,</h6>
+                    <address style="text-align: {{ app()->getLocale() == 'ar' ? 'right' :'left'}}">
+                      <h6>{{ __('table.to') }},</h6>
                       <h6 class="fw-bold invoice-customer">
                       {{ auth()->user()->name }}
                       </h6>
                      
                       <p class="mt-4 mb-1">
-                        <span>تاريخ الفاتورة  :</span>
+                        <span>{{ __('table.invoice_date') }}  :</span>
                         <i class="ti ti-calendar"></i>
                         {{ $row->order_date }}
                       </p>
                       <p class="mt-4 mb-1">
-                        <span>حالة الفاتورة  :</span>
+                        <span> {{ __('table.invoice_status') }}  :</span>
                      
                         {!! $row->status() !!}
                       </p>
                       <p class="mt-4 mb-1">
-                        <span> اجمالي التكلفة  :</span>
+                        <span> {{ __('table.total_cost') }}  :</span>
                         
                         {{ $row->total }}
                       </p>
                       @if(!empty($row->coupon_id))
                       <p class="mt-4 mb-1">
-                        <span> الكوبون  :</span>
+                        <span> {{ __('table.coupon') }}  :</span>
                        
                         {{ $row->coupon->code}}
                       </p>
                       <p class="mt-4 mb-1">
-                        <span> السعر بعد الخصم  :</span>
+                        <span> {{ __('table.price_after_desc') }} :</span>
                        
                         {{ $row->total_after_discount }}
                       </p>
@@ -148,9 +154,9 @@
                         <!-- start row -->
                         <tr>
                           <th class="text-center">#</th>
-                          <th>المنتج</th>
-                          <th class="text-end">الكمية</th>
-                          <th class="text-end">السعر</th>
+                          <th>{{ __('table.product') }}</th>
+                          <th class="text-end">{{ __('table.quantity') }}</th>
+                          <th class="text-end">{{ __('table.price') }}</th>
                          
                         </tr>
                         <!-- end row -->
@@ -158,15 +164,16 @@
                       <tbody>
                         <!-- start row -->
                       
-                        @foreach ($data as $row)
-                        <?php $details = App\Models\OrderDetail::where('order_id',$row->id)->get() ?>
-                        @endforeach
+                     
+                      
                         <?php $i =0; ?>
                         @foreach ($details as $d)
                         <?php $i++ ?>
+                      
+                    
                         <tr>
                           <td class="text-center">{{ $i }}</td>
-                          <td>{{ $d->product->name }}</td>
+                          <td>{{ request()->segment(1) == 'ar' ? $d->product->name_ar : $d->product->name_en   }}</td>
                           <td class="text-end">{{ $d->quantity }}</td>
                           <td class="text-end">{{ $d->price }}</td>
                           
@@ -184,12 +191,12 @@
                   <div class="clearfix"></div>
                   <hr />
                   <div class="text-end">
-                    <button class="btn btn-danger" type="submit">
+                    {{-- <button class="btn btn-danger" type="submit">
                       Proceed to payment
-                    </button>
+                    </button> --}}
                     <button class="btn btn-primary btn-default print-page" type="button">
                       <span><i class="ti ti-printer fs-5"></i>
-                        Print</span>
+                        {{ __('table.Print') }}</span>
                     </button>
                   </div>
                 </div>
@@ -209,7 +216,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="p-3 border-bottom">
-        <form class="position-relative">
+        <form class="position-relative" >
           <input type="search" class="form-control search-invoice ps-5" id="text-srh"
             placeholder="Search Invoice">
           <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
@@ -229,7 +236,7 @@
               <i class="ti ti-user fs-6"></i>
             </div>
             <div class="ms-3 d-inline-block w-75">
-              <h6 class="mb-0 invoice-customer">{{ $row->user->name }}</h6>
+              <h6 class="mb-0 invoice-customer">{{ $row->user->first_name.$row->user->last_name }}</h6>
 
               <span class="fs-3 invoice-id text-truncate text-body-color d-block w-85">Id: #{{ $i }}</span>
               <span class="fs-3 invoice-date text-nowrap text-body-color d-block">{{ $row->created_at->diffForHumans() }}</span>

@@ -3,9 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Admin;
+use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 
 class AdminSeeder extends Seeder
 {
@@ -16,11 +19,22 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        Admin::create([
+       $admin =  Admin::create([
             'name'=>'admin',
             'email'=>'admin@gmail.com',
             'password'=>Hash::make('password'),
             'status'=>1
         ]);
+        $role = 
+            ['name_en' => 'manager','name_ar'=>'المدير','guard_name' => 'admin'];
+           
+        
+        
+         $role = DB::table('roles')->insertGetId($role);
+        
+        $permissions = Permission::pluck('id','id')->all();
+     
+        $admin->syncPermissions($permissions);
+        $admin->assignRole([$role]);
     }
 }

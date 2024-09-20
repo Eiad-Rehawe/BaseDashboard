@@ -10,20 +10,23 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 
+Route::middleware(['localeSessionRedirect', 'localizationRedirect', 'localeViewPath'])->group(function () {
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
-
+    Route::get('admin/register',[RegisteredUserController::class,'createCompany'])->name('admin.regsiter');
     Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
-  
+
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
                 ->name('password.request');
 
@@ -60,11 +63,10 @@ Route::middleware('auth')->group(function () {
                 ->name('logout');
 });
 
-
 Route::middleware('guest:admin')->prefix('admin')->group( function () {
     Route::get('login', [AuthenticatedAdminSessionController::class, 'create'])
                 ->name('login.admin');
-    Route::post('login', [AuthenticatedAdminSessionController::class, 'store']);
+    Route::post('login', [AuthenticatedAdminSessionController::class, 'store'])->middleware('status');
 });
 
 Route::middleware('auth:admin')->prefix('admin')->group( function () {
@@ -73,4 +75,5 @@ Route::middleware('auth:admin')->prefix('admin')->group( function () {
 
     Route::view('/dashboard','dashboard')->name('dashboard');
 
+});
 });

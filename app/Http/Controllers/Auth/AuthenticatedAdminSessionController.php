@@ -13,7 +13,7 @@ use App\Http\Requests\Auth\LoginAdminRequest;
 
 class AuthenticatedAdminSessionController extends Controller
 {
-    
+   
     public function create(): View
     {
       //  dd(auth()->guard());
@@ -26,7 +26,7 @@ class AuthenticatedAdminSessionController extends Controller
 
     public function store(LoginAdminRequest $request): RedirectResponse
     {
-       
+      
         $request->authenticate();
 
         $request->session()->regenerate();

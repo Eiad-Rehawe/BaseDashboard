@@ -1,0 +1,32 @@
+<?php
+return[
+    // 'admins'=>'المدراء',
+    'admin'=>'مدير',
+    // 'Update Admin'=>'تعديل مدير',
+    // 'Update Status Admin'=>'تعديل حالة المدير',
+    // 'Delete Admin'=>'حذف مدير',
+    // 'Display Roles'=>'عرض الصلاحيات',
+    'role'=>'صلاحية',
+    // 'Update Role'=>'تعديل صلاحية',
+    // 'Delete Role'=>'حذف صلاحية',
+    // 'Display Products'=>'عرض المنتجات',
+    'product'=>'إضافة منتج',
+    // 'Update Product'=>'تعديل منتج',
+    // 'Update Product Status'=>'تعديل حالة المنتج',
+ 
+    // 'Delete Product'=>'حذف منتج',
+    // 'Display Users'=>'عرض المستخدمين',
+    'category'=>'الأقسام',
+    // 'Create Category'=>'إضافة قسم',
+    // 'Update Category'=>'تعديل قسم',
+    // 'Update Category Status'=>'تعديل حالة القسم',
+    // 'Delete Category'=>'حذف قسم',
+    // 'Display Complaiments'=>'عرض الشكاوي',
+    'complaiment'=>'إضافة شكوى',
+    // 'Display Coupons'=>'عرض الكوبونات',
+    'coupon'=>'إضافة كوبون',
+    // 'Update Coupon'=>'تعديل كوبون',
+    // 'Update Coupon Status'=>'تعديل حالة كوبون',
+    // 'Delete Coupon'=>'حذف كوبون',
+    // 'Delete Multible'=>'حذف متعدد'
+];

@@ -1,7 +1,7 @@
 
 
 
-<html lang="en" dir="rtl" data-bs-theme="light" data-color-theme="Blue_Theme">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
   <head>
     @include("partials.head")
     <title>{{config('app.APP_NAME'.'laravel')}}</title>
@@ -15,7 +15,7 @@
     @stack('style')
   </head>
 
-  <body>
+  <body >
     <!-- Preloader -->
     <div class="preloader">
       <img
@@ -47,14 +47,16 @@
         <div class="body-wrapper">
           <div class="container-fluid">
             <!--  Owl carousel -->
+            
            @yield('content')
           </div>
         </div>
-        @include("partials.customizer")
+      
       </div>
 
       @include("partials.header-components.dd-searchbar")
       @include("partials.header-components.dd-shopping-cart")
+      @include('backend.includes.modal')
     </div>
     <div class="dark-transparent sidebartoggler"></div>
     @include("partials.scripts")

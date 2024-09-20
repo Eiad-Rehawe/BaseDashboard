@@ -1,0 +1,58 @@
+<?php
+return [
+    'users'=>'Users',
+    'dashboard'=>'Dashboard',
+    'admins'=>'Employees',
+    'roles'=>'Roles',
+    'categories'=>'Categories',
+    'products'=>'Products',
+    'complaints'=>'Complaints',
+    'change_my_password'=>'Change My Password',
+    'My Profile'=>'My Profile',
+    'my_details'=>'My Details',
+    'coupons'=>'Coupons',
+    'complaints_create'=>'Create Complaints',
+    'orders'=>'Orders',
+    'links'=>'Links',
+    'posters'=>'Offers',
+    'comments'=>'Comments',
+    'contacts'=>'Contacts',
+    'change_my_info'=>'Change My Data',
+    'customers'=>'Mobile App Customers',
+    'employee_complaiment'=>'Employee Complaiment',
+    'users_complaiment'=>'Users Complaiment',
+    'offers'=>'offers',
+    'orders'=>'orders',
+    'abouts'=>'About Us',
+    'tables'=>[
+        'users'=>'Users',
+        'links'=>'Links',
+        'admins'=>'Employees',
+       'categories'=>'Categories',
+       'products'=>'Products',
+       'complaints'=>'Complaiments',
+       'comments'=>'Comments',
+       'coupons'=>'Coupons',
+       'orders'=>'Orders',
+       'offers'=>'Offers',
+       'contacts'=>'Contacts',
+       'abouts'=>'Abouts',
+        'roles'=>'Roles'
+    ],
+    'tab'=>[
+        'link'=>'Link' ,
+        'admin'=>'Employee',
+        'categorie'=>'Category',
+        'product'=>'Product',
+        'complaint'=>'Complaiment',
+        'coupon'=>'Coupon',
+        'offer'=>'Offer',
+        'role'=>'Role'
+    ],
+    'methods'=>[
+        'Display'=>'Display',
+        'Update'=>'Update',
+        'Create'=>'Create',
+        'Delete'=>'Delete'
+    ]
+];

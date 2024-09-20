@@ -1,0 +1,47 @@
+.triple-toggle-switch {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 300px;
+    background: #ddd;
+    border-radius: 25px;
+    overflow: hidden;
+  }
+  
+  .triple-toggle-switch input[type="radio"] {
+    display: none;
+  }
+  
+  .triple-toggle-switch label {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    cursor: pointer;
+    z-index: 2;
+  }
+  
+  .triple-toggle-switch .toggle-slider {
+    position: absolute;
+    width: 33.33%;
+    height: 100%;
+    background: #4caf50;
+    border-radius: 25px;
+    transition: transform 0.3s ease;
+    z-index: 1;
+  }
+  
+  .triple-toggle-switch input[type="radio"]:checked + label {
+    color: #fff;
+  }
+  
+  .triple-toggle-switch input[type="radio"]:checked:nth-of-type(1) ~ .toggle-slider {
+    transform: translateX(0%);
+  }
+  
+  .triple-toggle-switch input[type="radio"]:checked:nth-of-type(2) ~ .toggle-slider {
+    transform: translateX(100%);
+  }
+  
+  .triple-toggle-switch input[type="radio"]:checked:nth-of-type(3) ~ .toggle-slider {
+    transform: translateX(200%);
+  }

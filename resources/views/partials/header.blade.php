@@ -108,7 +108,7 @@
           >
             <div class="message-body">
               <a
-                href="javascript:void(0)"
+              href="{{ LaravelLocalization::getLocalizedURL('en', null, [], true) }}"
                 class="d-flex align-items-center gap-2 py-3 px-4 dropdown-item"
               >
                 <div class="position-relative">
@@ -122,38 +122,9 @@
                 </div>
                 <p class="mb-0 fs-3">English (UK)</p>
               </a>
+      
               <a
-                href="javascript:void(0)"
-                class="d-flex align-items-center gap-2 py-3 px-4 dropdown-item"
-              >
-                <div class="position-relative">
-                  <img
-                    src="{{ asset('assets/dashboard/images/svgs/icon-flag-cn.svg') }}"
-                    alt=""
-                    width="20px"
-                    height="20px"
-                    class="rounded-circle object-fit-cover round-20"
-                  />
-                </div>
-                <p class="mb-0 fs-3">中国人 (Chinese)</p>
-              </a>
-              <a
-                href="javascript:void(0)"
-                class="d-flex align-items-center gap-2 py-3 px-4 dropdown-item"
-              >
-                <div class="position-relative">
-                  <img
-                    src="{{ asset('assets/dashboard/images/svgs/icon-flag-fr.svg') }}"
-                    alt=""
-                    width="20px"
-                    height="20px"
-                    class="rounded-circle object-fit-cover round-20"
-                  />
-                </div>
-                <p class="mb-0 fs-3">français (French)</p>
-              </a>
-              <a
-                href="javascript:void(0)"
+              href="{{ LaravelLocalization::getLocalizedURL('ar', null, [], true) }}"
                 class="d-flex align-items-center gap-2 py-3 px-4 dropdown-item"
               >
                 <div class="position-relative">
@@ -177,7 +148,7 @@
         <!-- ------------------------------- -->
         <!-- start shopping cart Dropdown -->
         <!-- ------------------------------- -->
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a
             class="nav-link position-relative nav-icon-hover"
             href="javascript:void(0)"
@@ -188,7 +159,7 @@
             <i class="ti ti-basket"></i>
             <span class="popup-badge rounded-pill bg-danger text-white fs-2">2</span>
           </a>
-        </li>
+        </li> --}}
         <!-- ------------------------------- -->
         <!-- end shopping cart Dropdown -->
         <!-- ------------------------------- -->
@@ -196,7 +167,7 @@
         <!-- ------------------------------- -->
         <!-- start notification Dropdown -->
         <!-- ------------------------------- -->
-        <li class="nav-item dropdown">
+        {{-- <li class="nav-item dropdown">
           <a
             class="nav-link nav-icon-hover"
             href="javascript:void(0)"
@@ -213,7 +184,7 @@
           >
             @include("partials.header-components.dd-notification")
           </div>
-        </li>
+        </li> --}}
         <!-- ------------------------------- -->
         <!-- end notification Dropdown -->
         <!-- ------------------------------- -->

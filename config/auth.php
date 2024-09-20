@@ -16,6 +16,7 @@ return [
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',
+        
     ],
 
     /*
@@ -44,10 +45,11 @@ return [
             'driver' => 'session',
             'provider' => 'admins',
         ],
-        // 'users' => [
-        //     'driver' => 'sanctum',
-        //     'provider' => 'users',
-        // ],
+        
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
     ],
 
     /*
@@ -81,6 +83,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
+        // 'customers'=>[
+        //     'driver' => 'eloquent',
+        //     'model' => App\Models\Customer::class, 
+        // ]
     ],
 
     /*
@@ -105,6 +111,13 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        
+    // 'customers' => [
+    //     'provider' => 'customers',
+    //     'table' => 'password_resets',
+    //     'expire' => 60,
+    //     'throttle' => 60,
+    // ],
     ],
 
     /*

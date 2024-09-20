@@ -14,7 +14,6 @@
                             <li class="breadcrumb-item">
                                 <a class="text-muted text-decoration-none" href="{{ route('dashboard') }}">الرئيسية</a>
                             </li>
-                            <li class="breadcrumb-item" aria-current="page">@yield('table-name')</li>
                         </ol>
                     </nav>
                 </div>

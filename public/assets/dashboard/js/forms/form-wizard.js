@@ -38,7 +38,10 @@ form.children("div").steps({
 // Advance Example
 
 var form = $("#example-advanced-form").show();
-
+var first = $(location).attr('pathname');
+first.indexOf(1);
+first.toLowerCase();
+first = first.split("/")[1];
 form
     .steps({
         headerTag: "h3",
@@ -66,10 +69,12 @@ form
             // Used to skip the "Warning" step if the user is old enough.
             if (currentIndex === 2 && Number($("#age-2").val()) >= 18) {
                 form.steps("next");
+                
             }
             // Used to skip the "Warning" step if the user is old enough and wants to the previous step.
             if (currentIndex === 2 && priorIndex === 3) {
                 form.steps("previous");
+               
             }
         },
         onFinishing: function (event, currentIndex) {

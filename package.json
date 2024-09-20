@@ -10,6 +10,7 @@
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
         "axios": "^1.6.4",
+        "html5-qrcode": "^2.3.8",
         "laravel-datatables-vite": "^0.5.2",
         "laravel-vite-plugin": "^1.0.0",
         "postcss": "^8.4.31",
@@ -17,7 +18,13 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "@vitejs/plugin-vue": "^5.0.4",
+        "@zxing/library": "^0.20.0",
+        "qrcodejs": "^1.0.0",
+        "quagga": "^0.12.1",
         "resize-observer-polyfill": "^1.5.1",
-        "simplebar": "^6.2.5"
+        "simplebar": "^6.2.5",
+        "vue": "^3.4.27",
+        "vue-barcode-reader": "^1.0.3"
     }
 }
