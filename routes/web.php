@@ -62,7 +62,7 @@ Route::middleware(['localeSessionRedirect', 'localizationRedirect', 'localeViewP
   Route::view('complaiment','pages.complaiment')->name('complaiment');
   Route::view('/contac_us','pages.contact')->name('contact_us');
   Route::post('/add/contact',[FrontController::class, 'contact'])->name('user.contact');
-  Route::get('/cart',[CartController::class, 'index'])->name('cart');
+  Route::get('/cart',action: [CartController::class, 'index'])->name('cart');
   Route::get('fav',[FrontController::class, 'favouriteProducts'])->name('fav');
   Route::view('compare','pages.compare')->name('compare');
   Route::get('/compare/product',[FrontController::class, 'compare'])->name('product.compare');
@@ -92,3 +92,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+

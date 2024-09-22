@@ -86,7 +86,7 @@
     </li>
     @endif
    
- 
+{{--  
   @if(auth()->user()->can('Display Complaiments') || auth()->user()->can('عرض الشكاوي'))
   <li class="sidebar-item">
     <a class="sidebar-link" href="{{route('backend.complaints.index')}}" aria-expanded="false">
@@ -96,8 +96,8 @@
       <span class="hide-menu">{{ __('sidebar.employee_complaiment') }}</span>
     </a>
   </li>
-  @endif
-  @if(auth()->user()->can('Display Complaiments') || auth()->user()->can('عرض الشكاوي'))
+  @endif --}}
+  {{-- @if(auth()->user()->can('Display Complaiments') || auth()->user()->can('عرض الشكاوي'))
   <li class="sidebar-item">
     <a class="sidebar-link" href="{{route('backend.complaiments')}}" aria-expanded="false">
       <span>
@@ -106,9 +106,9 @@
       <span class="hide-menu">{{ __('sidebar.users_complaiment') }}</span>
     </a>
   </li>
-  @endif
+  @endif --}}
   
-  @if(auth()->user('admin')->can('Create Complaiment') || auth()->user('admin')->can('إضافة شكوى'))
+  {{-- @if(auth()->user('admin')->can('Create Complaiment') || auth()->user('admin')->can('إضافة شكوى'))
     <li class="sidebar-item">
       <a class="sidebar-link" href="{{route('backend.complaints.create')}}" aria-expanded="false">
         <span>
@@ -117,7 +117,7 @@
         <span class="hide-menu">{{ __('sidebar.complaints_create') }}</span>
       </a>
     </li>
-    @endif
+    @endif --}}
 
     @if(auth()->user('admin')->can('Display Coupons') || auth()->user('admin')->can('عرض الكوبونات'))
     <li class="sidebar-item">
@@ -151,7 +151,7 @@
       </a>
     </li>
     @endif
-    @if(auth()->user('admin')->can('Display Comments') || auth()->user('admin')->can('عرض التعليقات'))
+    {{-- @if(auth()->user('admin')->can('Display Comments') || auth()->user('admin')->can('عرض التعليقات'))
     <li class="sidebar-item">
       <a class="sidebar-link" href="{{route('backend.comments.index')}}" aria-expanded="false">
         <span>
@@ -160,7 +160,7 @@
         <span class="hide-menu">{{ __('sidebar.comments') }}</span>
       </a>
     </li>
-    @endif
+    @endif --}}
  
     @if(auth()->user('admin')->can('Display Contacts') || auth()->user('admin')->can('عرض الرسائل'))
     <li class="sidebar-item">

@@ -315,10 +315,9 @@ class IndexController extends Controller
     public function filterProducts(Request $request)
     {
         try {
-
-            $lang = request()->header('Accept-Language');
-            $data = (new Product())
-                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+            $lang = $request->header('Accept-Language');
+            
+            $products = Product::select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
                 ->Filter()
                 ->with('files')
                 ->with('weight_measurement', function ($q) use ($lang) {
@@ -326,21 +325,32 @@ class IndexController extends Controller
                 })
                 ->with('ratings', function ($q) {
                     $q->select('product_id', DB::raw('AVG(rating) as rating'))
-                        ->groupBy('rating', 'product_id');
-                })->with('category', function ($q) use ($lang) {
-                $q->select('id', "name_$lang as name", 'parent_id')->with('parent', function ($q) use ($lang) {
-                    $q->select('id', "name_$lang as name");
-                });
-            })
-
-                ->where('status', 1)
-                ->get();
+                        ->groupBy('product_id');
+                })
+                ->with('category', function ($q) use ($lang) {
+                    $q->select('id', "name_$lang as name", 'parent_id')
+                    ->with('parent', function ($q) use ($lang) {
+                        $q->select('id', "name_$lang as name");
+                    });
+                })
+                ->where('status', 1);
+    
+            if ($request->filled('category_id')) {
+                $products->where('category_id', $request->category_id);
+            }
+    
+            if ($request->filled('min') && $request->filled('max')) {
+                $products->whereRaw('COALESCE(new_selling_price, selling_price) BETWEEN ? AND ?', [$request->min, $request->max]);
+            }
+    
+            $data = $products->get();
+            
             return $this->returnData($data, true, 200);
         } catch (\Exception $e) {
-            dd($e);
-            return response()->json($e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+    
 
     public function featured_cat(Request $request)
     {
@@ -677,18 +687,25 @@ class IndexController extends Controller
             $product = Favourite::where('product_id', $request->id)->first();
             if (!$product) {
                 Favourite::create(['product_id' => $request->id, 'user_id' => auth()->id()]);
-                return $this->returnSuccess(__('messages.Add To Favourite Successfully'), 200);
-
-            }if ($product) {
-                $product->delete();
-                return $this->returnSuccess(__('messages.Remove From Favourite Successfully'), 200);
-
+                $response = [
+                    'status' => true,
+                    'msg'=>__('messages.Add To Favourite Successfully'),
+                    'fav'=>true
+                ];
+                return response()->json($response,200);
             }
-
+            if ($product) {
+                $product->delete();
+                $response = [
+                    'status' => true,
+                    'msg'=>__('messages.Remove From Favourite Successfully'),
+                    'fav'=>false
+                ];
+                return response()->json($response,200);
+            }
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
-
     }
 
     public function favouriteProducts(Request $request)

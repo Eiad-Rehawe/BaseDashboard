@@ -21,12 +21,20 @@ class AboutController extends Controller
     {
         try{
             $fileData = $this->uploads($request->image, '/abouts/');
-            $row = About::first();
-            if($row){
-                $row->update(['descrption_en'=>$request->descrption_en,'descrption_ar'=>$request->descrption_ar,'image'=>$fileData['fileName']]);
+            // $row = About::first();
+            // if($row){
+            //     $row->update(['descrption_en'=>$request->descrption_en,'descrption_ar'=>$request->descrption_ar,'image'=>$fileData['fileName']]);
+            // }
+            // About::create(['descrption_en'=>$request->descrption_en,'descrption_ar'=>$request->descrption_ar,'image'=>$fileData['fileName']]);
+            if (!$fileData)
+                return response()->json(['title' => __('messages.error'), 'message' => __('messages.image upload failed'), 'status' => 'error'], 500);
 
-            }
-            About::create(['descrption_en'=>$request->descrption_en,'descrption_ar'=>$request->descrption_ar,'image'=>$fileData['fileName']]);
+            About::updateOrCreate(
+        ['id'=>1],
+        [   'descrption_en'=>$request->descrption_en,
+                    'descrption_ar'=>$request->descrption_ar,
+                    'image'=>$fileData['fileName']
+                ]);
             return response()->json(['title' => __('messages.success'), 'message' => __('messages.saved success'), 'status' => 'success', 'redirect' => route('backend.abouts.index')]);
 
         }catch(\Exception $e)

@@ -52,7 +52,5 @@ class AdminRequest extends FormRequest
             'phone'=>'string|unique:admins,phone,except,id'
         ];
        }
-    }
-
-    
+    }    
 }
