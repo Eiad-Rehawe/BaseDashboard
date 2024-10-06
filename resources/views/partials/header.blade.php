@@ -12,7 +12,7 @@
         <i class="ti ti-menu-2"></i>
       </a>
     </li>
-    <li class="nav-item d-none d-lg-block">
+    {{-- <li class="nav-item d-none d-lg-block">
       <a
         class="nav-link nav-icon-hover"
         href="javascript:void(0)"
@@ -21,7 +21,7 @@
       >
         <i class="ti ti-search"></i>
       </a>
-    </li>
+    </li> --}}
   </ul>
 
   {{-- <ul class="navbar-nav quick-links d-none d-lg-flex">
@@ -70,7 +70,7 @@
   </a>
   <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
     <div class="d-flex align-items-center justify-content-between">
-      <a
+      {{-- <a
         href="javascript:void(0)"
         class="nav-link d-flex d-lg-none align-items-center justify-content-center"
         type="button"
@@ -79,7 +79,7 @@
         aria-controls="offcanvasWithBothOptions"
       >
         <i class="ti ti-align-justified fs-7"></i>
-      </a>
+      </a> --}}
       <ul
         class="navbar-nav flex-row ms-auto align-items-center justify-content-center"
       >

@@ -104,6 +104,6 @@ return [
     'on_product'=>'على منتج',
     'barcode_id'=>'رقم المنتج',
     'comment'=>'التعليق',
-    'pendding'=>'قيد الطلب'
-
+    'pendding'=>'قيد الطلب',
+    'Size'=>'المقاس'
 ];

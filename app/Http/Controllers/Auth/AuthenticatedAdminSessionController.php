@@ -22,19 +22,14 @@ class AuthenticatedAdminSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-  
 
     public function store(LoginAdminRequest $request): RedirectResponse
     {
-      
         $request->authenticate();
 
         $request->session()->regenerate();
         return redirect()->intended(RouteServiceProvider::HOME);
-        
     }
-
-
 
     public function destroy(Request $request): RedirectResponse
     {

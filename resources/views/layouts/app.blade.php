@@ -45,7 +45,7 @@
         </aside>
 
         <div class="body-wrapper">
-          <div class="container-fluid">
+          <div class="container-fluid" style="padding: 0%">
             <!--  Owl carousel -->
             
            @yield('content')

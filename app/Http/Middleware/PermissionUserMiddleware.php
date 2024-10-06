@@ -39,6 +39,9 @@ class PermissionUserMiddleware
         if(request()->segment(3) == 'categories'){
             $table = 'الأقسام';
         }
+        if (request()->segment(3) == "sizes"){
+            $table = 'المقاسات';
+        }
         if(request()->segment(3) == 'complaints'){
             $table = 'الشكاوي';
         }

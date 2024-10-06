@@ -13,9 +13,10 @@ use App\Http\Controllers\Dashboard\OrderController;
 use App\Http\Controllers\Dashboard\PosterController;
 use App\Http\Controllers\Dashboard\ProductController;
 use App\Http\Controllers\Dashboard\RoleController;
-
+use App\Http\Controllers\Dashboard\SizeController;
 use App\Http\Controllers\Dashboard\UsersController;
 use App\Http\Controllers\ProfileController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
@@ -100,9 +101,9 @@ Route::prefix('admin')->middleware(['auth:admin','status','localeSessionRedirect
             Route::get('abouts',[AboutController::class,'index'])->name('abouts.index');
             Route::post('abouts/store',[AboutController::class,'store'])->name('abouts.store');
 
+            Route::resource('sizes', SizeController::class);
         });
-   
-  
+        
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

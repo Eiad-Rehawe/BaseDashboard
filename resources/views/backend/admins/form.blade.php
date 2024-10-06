@@ -105,34 +105,28 @@
                     <div class="mb-3">
                         <input type="checkbox" class="checkbox"  >
                         <label>{{ __('table.permissions') }} :</label>
-                      @isset($row)
-                      <?php $data2_ =$row->permissions?>
-                      @endisset
-                   
-                       
-                       <div class="row" id="permissions">
-                       
-                        @foreach ($data as $d)
-                       
+                        @isset($row)
+                        <?php $data2_ = $row->permissions; ?>
+                        @else
+                        <?php $data2_ = []; ?>
+                        @endisset
                         
+                    <div class="row" id="permissions">
+                        @foreach ($data as $d):
+
                         <div class="col-md-3 c-inputs-stacked">
                             <div class="form-check">
                                 <input type="checkbox" id="customRadio16" name="permission_id[]"
                                     class="form-check-input" value="{{ $d->id }}" 
-                                    @foreach ($data2_ as $d2)
-                     
-                                    {{ 
-                                    ($d->permission_id == $d2->permission_id ? 'checked':($d->id == $d2->permission_id  ? 'checked':'')) 
-                                    }}  @endforeach
-                                     />
+                                    @foreach ($data2_ as $d2):
+                                    {{ ($d->permission_id == $d2->permission_id ? 'checked':($d->id == $d2->permission_id  ? 'checked':'')) }}
+                                    @endforeach
+                                />
                                 <label class="form-check-label" for="customRadio16">{{ $d->name }}</label>
                             </div>
-
                         </div>
-                       
-                       
                         @endforeach
-                       </div>
+                    </div>
                     </div>
                 </section>
                 <!-- Step 3 -->

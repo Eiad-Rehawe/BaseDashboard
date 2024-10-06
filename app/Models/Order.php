@@ -10,7 +10,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['first_name','last_name','phone','email','address_1','address_2','country','city','notes','status','total','user_id','coupon_id','coupon_value','total_after_discount','order_date'];
+    protected $fillable = ['first_name','last_name','phone','address','province','region','notes','status','total','user_id','coupon_id','coupon_value','total_after_discount','order_date'];
     // public $timestamps = false;
     public function user()
     {

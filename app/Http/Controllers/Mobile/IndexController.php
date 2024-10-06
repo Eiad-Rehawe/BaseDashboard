@@ -23,6 +23,7 @@ use App\Models\Poster;
 use App\Models\Product;
 use App\Models\Rating;
 use App\Models\Review;
+use App\Models\Size;
 use App\Models\UsedCoupon;
 use App\Notifications\addOrder;
 use App\Traits\ResponseTrait;
@@ -37,23 +38,24 @@ class IndexController extends Controller
         try {
             $lang = request()->header('Accept-Language');
             $data = (new Product())
-                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
-                ->with('files')->with('weight_measurement', function ($q) use ($lang) {
-                $q->select('id', "name_$lang as name");
-            })->with('category', function ($q) use ($lang) {
-                $q->select('id', "name_$lang as name", 'parent_id')->with('parent', function ($q) use ($lang) {
+                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", "size_id")
+                ->with('files')
+                ->with('weight_measurement', function ($q) use ($lang) {
                     $q->select('id', "name_$lang as name");
-                });
-            })
+                })->with('category', function ($q) use ($lang) {
+                    $q->select('id', "name_$lang as name", 'parent_id')->with('parent', function ($q) use ($lang) {
+                        $q->select('id', "name_$lang as name");
+                    });
+                })
                 ->with('ratings', function ($q) {
                     $q->select('product_id', DB::raw('AVG(rating) as rating'))
                         ->groupBy('product_id');
                 })
+                ->with('size:id,size')
                 ->where('status', 1)
                 ->orderBy('id', 'desc')
                 ->get();
-
-            // معالجة البيانات لإزالة الحقول الفارغة
+    
             $filteredData = $data->map(function ($product) {
                 $productArray = $product->toArray();
                 foreach ($productArray as $key => $value) {
@@ -69,13 +71,14 @@ class IndexController extends Controller
             return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
     }
+    
     public function ShowProductsByCategoryId($categoryId = null)
     {
         try {
             $lang = request()->header('Accept-Language');
 
             $data = (new Product())
-            ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+            ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption",'size_id')
             ->with('files')
             ->with('weight_measurement', function ($q) use ($lang) {
                 $q->select('id', "name_$lang as name");
@@ -89,6 +92,7 @@ class IndexController extends Controller
                 $q->select('product_id', DB::raw('AVG(rating) as rating'))
                     ->groupBy('product_id');
             })
+            ->with('size:id,size')
             ->where('status', 1)
             ->when($categoryId, function ($q) use ($categoryId) {
                 return $q->where('category_id', $categoryId); // تصفية بناءً على category_id إذا تم تمريره
@@ -127,7 +131,6 @@ class IndexController extends Controller
                     } else {
                         $min = $products->where('category_id', request('category'))->min('new_selling_price');
                         $max = $products->where('category_id', request('category'))->max('new_selling_price');
-
                     }
                 } else {
                     if ($product->new_selling_price == null) {
@@ -136,7 +139,6 @@ class IndexController extends Controller
                     } else {
                         $min = $products->min('new_selling_price');
                         $max = $products->max('new_selling_price');
-
                     }
                 }
             }
@@ -152,7 +154,7 @@ class IndexController extends Controller
         try {
             $lang = request()->header('Accept-Language');
             $data = (new Product())
-                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption",'size_id')
                 ->with('files')->with('weight_measurement', function ($q) use ($lang) {
                 $q->select('id', "name_$lang as name");
             })->with('category', function ($q) use ($lang) {
@@ -163,7 +165,8 @@ class IndexController extends Controller
                 ->with('ratings', function ($q) {
                     $q->select('product_id', DB::raw('AVG(rating) as rating'))
                         ->groupBy('product_id');
-                })
+            })
+                ->with('size:id,size')
                 ->where('status', 1)->orderBy('id', 'desc')->take(10)->latest()->get();
             $filteredData = $data->map(function ($product) {
                 $productArray = $product->toArray();
@@ -216,7 +219,7 @@ class IndexController extends Controller
             $lang = request()->header('Accept-Language');
 
             $data = Poster::select('id', 'product_id', 'price_discount')->with(['product' => function ($q) use ($lang) {
-                $q->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+                $q->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", 'size_id')
                     ->with('files')->with('ratings', function ($q) {
                     $q->select('product_id', DB::raw('AVG(rating) as rating'))
                         ->groupBy('rating', 'product_id');
@@ -228,6 +231,7 @@ class IndexController extends Controller
                 $q->with('weight_measurement', function ($q) use ($lang) {
                     $q->select('id', "name_$lang");
                 });
+                $q->with('size:id,size');
             }])
                 ->whereNull('Percentage_discount')->whereNull('category_id')
                 ->where('status', 1)->get();
@@ -251,7 +255,7 @@ class IndexController extends Controller
         try {
             $lang = request()->header('Accept-Language');
             $data = (new Product())
-                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", 'size_id')
                 ->with('files')->with('ratings', function ($q) {
                 $q->select('product_id', DB::raw('AVG(rating) as rating'))
                     ->groupBy('rating', 'product_id');
@@ -261,7 +265,8 @@ class IndexController extends Controller
                 });
             })->where('id', $id)->where('status', 1)->with('weight_measurement', function ($q) use ($lang) {
                 $q->select('id', "name_$lang");
-            })->first();
+            })->with('size:id,size')->first();
+
             if (!$data) {
                 return $this->returnError(__('messages.not_found'), 404);
             }
@@ -317,7 +322,7 @@ class IndexController extends Controller
         try {
             $lang = $request->header('Accept-Language');
             
-            $products = Product::select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+            $products = Product::select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", 'size_id')
                 ->Filter()
                 ->with('files')
                 ->with('weight_measurement', function ($q) use ($lang) {
@@ -333,6 +338,7 @@ class IndexController extends Controller
                         $q->select('id', "name_$lang as name");
                     });
                 })
+                ->with('size:id,size')
                 ->where('status', 1);
     
             if ($request->filled('category_id')) {
@@ -359,7 +365,7 @@ class IndexController extends Controller
             $category = Category::with('children')->where('id', $request->category)->first();
 
             $childs = $category->children()->pluck('id');
-            $data = Product::select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+            $data = Product::select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", 'size_id')
                 ->where('category_id', $category->id)->orWhereIn('category_id', $childs)->whereHas('files')
                 ->with('ratings', function ($q) {
                     $q->select('product_id', DB::raw('AVG(rating) as rating'))
@@ -369,7 +375,8 @@ class IndexController extends Controller
                     $q->select('id', "name_$lang as name");
                 });
             })
-                ->where('status', 1)->orderBy('id', 'desc')->paginate();
+            ->with('size:id,size')
+            ->where('status', 1)->orderBy('id', 'desc')->paginate();
             return $this->returnData($data, true, 200);
         } catch (\Exception $e) {
             dd($e);
@@ -403,206 +410,139 @@ class IndexController extends Controller
             return response()->json($e->getMessage());
         }
     }
-    public function selectProduct()
-    {
-        $lang = request()->header('Accept-Language');
+    // public function selectProduct()
+    // {
+    //     $lang = request()->header('Accept-Language');
 
-        $product = Product::select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
-            ->with('files')->with('ratings', function ($q) {
-            $q->select('product_id', DB::raw('AVG(rating) as rating'))
-                ->groupBy('rating', 'product_id');
-        })->with('category', function ($q) use ($lang) {
-            $q->select('id', "name_$lang as name", 'parent_id')->with('parent', function ($q) use ($lang) {
-                $q->select('id', "name_$lang as name");
-            });
-        });
-        return $product;
-    }
+    //     $product = Product::select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+    //         ->with('files')->with('ratings', function ($q) {
+    //         $q->select('product_id', DB::raw('AVG(rating) as rating'))
+    //             ->groupBy('rating', 'product_id');
+    //     })->with('category', function ($q) use ($lang) {
+    //         $q->select('id', "name_$lang as name", 'parent_id')->with('parent', function ($q) use ($lang) {
+    //             $q->select('id', "name_$lang as name");
+    //         });
+    //     });
+    //     return $product;
+    // }
 
-    public static function selectCategory()
-    {
-        $lang = request()->header('Accept-Language');
-        $data = (new Category())
-            ->select('id', "name_$lang as name", 'parent_id')
-            ->with('parent', function ($q) use ($lang) {
-                $q->select('id', "name_$lang as name", 'parent_id');
-            })->with('files');
-        return $data;
-    }
+    // public static function selectCategory()
+    // {
+    //     $lang = request()->header('Accept-Language');
+    //     $data = (new Category())
+    //         ->select('id', "name_$lang as name", 'parent_id')
+    //         ->with('parent', function ($q) use ($lang) {
+    //             $q->select('id', "name_$lang as name", 'parent_id');
+    //         })->with('files');
+    //     return $data;
+    // }
+
+
     public function AddOrder(MobileOrderRequest $request)
     { 
         try {
             DB::beginTransaction();
-            $statusCode = '';
-            $msg = '';
-            $qty = [];
-            $pp = [];
-            // $products_id = explode(',', $request->product_id);
-            // $quantity = explode(',', $request->qty);
-            foreach ($request->product_id as $p) {
-                array_push($pp, $p);
-
-            }
-            foreach ( $request->qty as $q) {
-                array_push($qty, $q);
-
-            }
-
-            $products = Product::whereIn('id', (array) $pp)->get();
-            $total = 0;
-            foreach ($products as $index => $product) {
-                $product = Product::where('id', $pp[$index])->first();
-
-                $total = $product->price() * (int) $qty[$index];
+            
+            $products = Product::whereIn('id', $request->product_id)->get();
+            if ($products->isEmpty()) {
+                return $this->returnError(__('messages.please add products to your cart'), 500);
             }
             
-            if (count($products) > 0) {
-                if (!empty($request->code)) {
-                
-                    $coupon = Coupon::where('code', $request->code)->first();
-                   
-                    if (isset($coupon) && !empty($coupon)) {
-                      
-                        $copon_user = CouponUser::where('coupon_id', $coupon->id)->first();
+            $total = 0;
+            for ($i = 0; $i < count($products); $i++) {
+                $product = $products[$i];
+                $total += ($product->new_selling_price == null ? $product->selling_price : $product->new_selling_price) * ((int)$request->qty[$i]);
+            }
 
-                        if ($copon_user != null && $copon_user->user_id == auth()->user()->id || $copon_user != null && $copon_user->user_id == 0) {
-
-                            $used_coupon = $coupon->coupon_used->where('user_id', auth()->id())->first();
-
-                            if (empty($used_coupon)) {
-                                if ($coupon->value < $total) {
-                                    if ($coupon->expired_at > now()) {
-                                        if (!empty($copon_user)) {
-                                            $order = Order::create([
-                                                'user_id' => auth()->id(),
-                                                'coupon_id' => $coupon->id,
-
-                                                'first_name' => $request->first_name,
-                                                'last_name' => $request->last_name,
-                                                'phone' => $request->phone,
-                                                'email' => $request->email,
-                                                'address_1' => $request->address_1,
-                                                'address_2' => $request->address_2,
-                                                'country' => $request->country,
-                                                'city' => $request->city,
-                                                'notes' => $request->notes,
-                                                'status' => 'Checkout',
-                                                'total' => $total,
-                                                'total_after_discount' => $total - $coupon->value,
-
-                                                'coupon_value' => $coupon->value ?? null,
-                                                'order_date' => now(),
-                                            ]);
-                                            UsedCoupon::create([
-                                                'coupon_id' => $coupon->id,
-                                                'user_id' => auth()->id(),
-                                                'order_id' => $order->id,
-                                            ]);
-                                            foreach ($products as $index => $product) {
-                                                $request->header('Accept-Language') == 'ar' ? $name = $product->name_ar : $name = $product->name_en;
-
-                                                OrderDetail::updateOrCreate(
-                                                    ['product_id' => $product->id,
-
-                                                        'order_id' => $order->id,
-                                                    ], [
-                                                        'product_name' => $name,
-                                                        'price' => $product->price(),
-                                                        'quantity' => (int) $qty[$index],
-                                                    ]);
-
-                                            }
-                                            $msg = __('messages.add order success');
-                                            $statusCode = 200;
-
-                                        } else {
-
-                                            $msg = __('messages.coupon not exist');
-                                            $statusCode = 404;
-                                        }
-                                    } else {
-
-                                        $msg = __('messages.your coupon is expired');
-                                        $statusCode = 403;
-                                    }
-                                } else {
-                                    $msg = __('messages.your invoice total less than coupon value');
-                                    $statusCode = 403;
-                                }
-
-                            } else {
-
-                                $msg = __('messages.your coupon have been used recently');
-                                $statusCode = 403;
-                            }
-
-                        } else {
-                     
-                            $msg = __('messages.your coupon is not correct');
-                            $statusCode = 403;
-                        }
-
-                    } else if (!isset($coupon)) {
-
-                        $msg = __('messages.coupon not exist');
-                        $statusCode = 404;
-
-                    }
-                } elseif (empty($request->code)) {
-                    $order = Order::create([
-                        'user_id' => auth()->id(),
-                        'coupon_id' => null,
-                        'first_name' => $request->first_name,
-                        'last_name' => $request->last_name,
-                        'phone' => $request->phone,
-                        'email' => $request->email,
-                        'address_1' => $request->address_1,
-                        'address_2' => $request->address_2,
-                        'country' => $request->country,
-                        'city' => $request->city,
-                        'notes' => $request->notes,
-                        'status' => 'Checkout',
-                        'total' => $total,
-                        'total_after_discount' => null,
-
-                        'coupon_value' => null,
-                        'order_date' => now(),
-                    ]);
-
-                    foreach ($products as $index => $product) {
-                        $request->header('Accept-Language') == 'ar' ? $name = $product->name_ar : $name = $product->name_en;
-                        $order_d = OrderDetail::updateOrCreate(
-                            ['product_id' => $product->id,
-
-                                'order_id' => $order->id,
-                            ], [
-                                'product_name' => $name,
-                                'price' => $product->price(),
-                                'quantity' => (int) $qty[$index],
-                            ]);
-
-                    }
-
-                    $msg = __('messages.add order success');
-                    $statusCode = 200;
+            $coupon = null;
+            if (!empty($request->code)) {
+                $coupon = $this->applyCoupon($request->code, $total);
+                if (is_string($coupon)) {
+                    return $this->returnError($coupon, 403); 
                 }
-            } else {
-
-                $msg = __('messages.please add products to your cart');
-                $statusCode = 500;
             }
+            
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'coupon_id' => $coupon->id ?? null,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'province' => $request->province,
+                'region' => $request->region,
+                'notes' => $request->notes,
+                'status' => 'Checkout',
+                'total' => $total,
+                'total_after_discount' => $coupon ? ($total - $coupon->value) : null,
+                'coupon_value' => $coupon->value ?? null,
+                'order_date' => now(),
+            ]);
+            
+            foreach ($products as $index => $product) {
+                $productName = $request->header('Accept-Language') == 'ar' ? $product->name_ar : $product->name_en;
+                OrderDetail::updateOrCreate(
+                    ['product_id' => $product->id, 'order_id' => $order->id],
+                    [
+                        'product_name' => $productName,
+                        'price' => $product->price(),
+                        'quantity' => (int)$request->qty[$index],
+                    ]
+                );
+            }
+            
+            if ($coupon) {
+                UsedCoupon::create([
+                    'coupon_id' => $coupon->id,
+                    'user_id' => auth()->id(),
+                    'order_id' => $order->id,
+                ]);
+            }
+            
             DB::commit();
-            if ($statusCode == 200) {
-                return $this->returnSuccess($msg, 200);
-
-            } else {
-                return $this->returnError( $msg, $statusCode);
-            }
+            return $this->returnSuccess(__('messages.add order success'), 200);
+            
         } catch (\Exception $e) {
-            dd($e);
-            return response()->json( $e->getMessage());
+            DB::rollBack();
+            return response()->json($e->getMessage(), 500);
         }
     }
+
+
+private function applyCoupon($code, $total)
+{
+    $coupon = Coupon::where('code', $code)->first();
+    if (!$coupon) {
+        return __(key: 'messages.coupon not exist');
+    }
+    
+    if ($coupon->expired_at <= now()) {
+        return __('messages.your coupon is expired');
+    }
+    
+    if ($coupon->value >= $total) {
+        return __('messages.your invoice total less than coupon value');
+    }
+    $usedCoupon = UsedCoupon::where('coupon_id',$coupon->id)->first();
+    
+    if ($usedCoupon){
+        return __('messages.your coupon have been used recently');
+    }
+
+    $couponUser = CouponUser::where('coupon_id', $coupon->id)
+                            ->where(function ($query) {
+                                $query->where('user_id', auth()->id())
+                                    ->orWhere('user_id', 0);
+                            })
+                            ->first();
+    
+    if (!$couponUser) {
+        return __('messages.you can\'t use this coupon');
+    }
+    
+    return $coupon;
+}
+
 
     public function cancelOrder($id)
     {
@@ -677,7 +617,7 @@ class IndexController extends Controller
     public function about()
     {
         $lang = request()->header('Accept-Language');
-        $data = About::select("descrption_$lang as descrption", 'image')->first();
+        $data = About::select("descrption_$lang as descrption", 'image','phone_number','Shop_name','Company_name')->first();
         return $this->returnData($data, true, 200);
     }
 
@@ -715,26 +655,31 @@ class IndexController extends Controller
 
             $fav = Favourite::where('user_id', auth()->id())->with('product')->first();
             $data = Favourite::where('user_id', auth()->id())->with('product',function($q) use($lang){
-                $q-> select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+                $q-> select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", 'size_id')
                 ->with('files')->with('ratings', function ($q) {
                 $q->select('product_id', DB::raw('AVG(rating) as rating'))
                     ->groupBy('rating', 'product_id');
-            })->with('category', function ($q) use ($lang) {
+            })
+            ->with('category', function ($q) use ($lang) {
                 $q->select('id', "name_$lang as name", 'parent_id')->with('parent', function ($q) use ($lang) {
                     $q->select('id', "name_$lang as name");
                 });
-            })->where('status', 1)->with('weight_measurement', function ($q) use ($lang) {
-                $q->select('id', "name_$lang");
-            });
             })
-           ->orderBy('id', 'desc')->get();
+            ->where('status', 1)
+            ->with('weight_measurement', function ($q) use ($lang) {
+                $q->select('id', "name_$lang");
+            })
+            ->with('size:id,size');
+            })
+            ->orderBy('id', 'desc')->get();
 
             return $this->returnData($data, true, 200);
 
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
-
     }
-
+    public function SellProduct(Request $request) {
+        
+    }
 }

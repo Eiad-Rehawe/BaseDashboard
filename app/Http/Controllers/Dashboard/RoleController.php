@@ -36,7 +36,7 @@ class RoleController extends BackendController
             'langs'=>Language::get()
         ];
     }
-   
+
     public function store(RoleRequest $request,RoleService $service)
     {
         try{
@@ -51,7 +51,6 @@ class RoleController extends BackendController
         }catch(\Exception $e){
             return response()->json($e->getMessage(),500);
         }
-
     }
 
     public function update(RoleRequest $request,RoleService $service,$id)
@@ -68,8 +67,5 @@ class RoleController extends BackendController
         }catch(\Exception $e){
             return response()->json($e->getMessage(),500);
         }
-
     }
-
-
 }

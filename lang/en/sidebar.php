@@ -6,6 +6,7 @@ return [
     'roles'=>'Roles',
     'categories'=>'Categories',
     'products'=>'Products',
+    'sizes'=>'Sizes',
     'complaints'=>'Complaints',
     'change_my_password'=>'Change My Password',
     'My Profile'=>'My Profile',

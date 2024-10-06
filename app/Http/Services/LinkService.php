@@ -13,7 +13,6 @@ class LinkService
 
     public function handle($request, $id = null)
     {
-
         try {
             DB::beginTransaction();
             $row = Link::updateOrCreate(['id' => $id], $request);
@@ -25,7 +24,4 @@ class LinkService
             return response()->json($e->getMessage(), 500);
         }
     }
-
-   
-
 }

@@ -19,7 +19,7 @@ class ProductRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, mixed>
+     * @return array<string, mixed> 
      */
     public function rules()
     {
@@ -33,7 +33,7 @@ class ProductRequest extends FormRequest
             'quantity'=>'required',
             'descrption_ar'=>'required|string',
             'descrption_en'=>'required|string',
-            'barcode_id'=>'required|unique:products,barcode_id,except,id',
+            // 'barcode_id'=>'required|unique:products,barcode_id,except,id',
             'image'=>'required',
         ];
     }

@@ -30,9 +30,9 @@ class UsersDataTable extends DataTable
            ->editColumn('updated_at',function($query){
             return $query->created;
            })
-           ->addColumn('ckeckbox',function($query){
-            return '<input id="checkbox" name="id[]" type="checkbox" value="'.$query->id.'">';
-           })
+        //    ->addColumn('ckeckbox',function($query){
+        //     return '<input id="checkbox" name="id[]" type="checkbox" value="'.$query->id.'">';
+        //    })
            ->editColumn('gender',function($query){
             return $query->gender();
            })
@@ -79,7 +79,7 @@ class UsersDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('ckeckbox')->title('<input type="checkbox" class="checkbox"  >')->exportable(false)->printable(false)->orderable(false)->searchable(false),
+            // Column::make('ckeckbox')->title('<input type="checkbox" class="checkbox"  >')->exportable(false)->printable(false)->orderable(false)->searchable(false),
             // Column::make('id'),
             Column::make('first_name')->title(trans('table.first_name')),
             Column::make('last_name')->title(trans('table.last_name')),

@@ -12,7 +12,9 @@ $table;
 if(request()->segment(3) == 'admins'){
     $table = 'موظف';
 }
-
+if (request()->segment(3) == 'sizes'){
+    $table = 'مقاس';
+}
 if(request()->segment(3) == 'roles'){
     $table = 'صلاحية';
 }
@@ -43,7 +45,7 @@ if(request()->segment(3) == 'users_complaiment')
 }
 
 ?>
-<div class="container-fluid">
+<div class="container-fluid" style="padding:0%">
     @include('backend.includes.qr')
     <div class="card bg-info-subtle shadow-none position-relative overflow-hidden mb-4">
         <div class="card-body px-4 py-3">

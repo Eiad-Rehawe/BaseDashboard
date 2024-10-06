@@ -11,7 +11,6 @@ use Illuminate\Validation\ValidationException;
 
 class LoginAdminRequest extends FormRequest
 {
-
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
@@ -27,9 +26,7 @@ class LoginAdminRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
     }
 
-   
-
-       /**
+    /*
      * Ensure the login request is not rate limited.
      *
      * @throws \Illuminate\Validation\ValidationException

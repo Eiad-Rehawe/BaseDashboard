@@ -6,6 +6,7 @@ return [
     'roles'=>'الوظائف',
     'categories'=>'الأقسام',
     'products'=>'المنتجات',
+    'sizes'=>'المقاسات',
     'complaints'=>'الشكاوي',
     'complaints_create'=>'اضافة شكوى',
     'My Profile'=>'حسابي',

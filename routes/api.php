@@ -4,6 +4,7 @@ use App\Http\Controllers\Mobile\AuthenticatController;
 use App\Http\Controllers\Mobile\ForgotPasswordController;
 use App\Http\Controllers\Mobile\IndexController ;
 use App\Http\Controllers\Mobile\OrdersController;
+use App\Http\Controllers\Mobile\PurchaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,7 +38,7 @@ Route::group(['middleware'=>'Localization'],function(){
     Route::get('/product/by/barcode/{id}',[IndexController::class, 'showProductByBarcode']);
     Route::get('/products/by/categoryId/{id}', [IndexController::class, 'ShowProductsByCategoryId']);
 
-    Route::post('filter_products',[IndexController::class, 'filterProducts']); //test on postamn
+    Route::post('filter_products',[IndexController::class, 'filterProducts']);
     Route::get('/latest/products',[IndexController::class, 'latest_products']);
     Route::get('/categories/offers',[IndexController::class, 'offer_categories']);
     Route::get('products/offers',[IndexController::class, 'offer_products']);
@@ -63,4 +64,6 @@ Route::group(['middleware'=>'Localization'],function(){
         Route::post('delete/product/order',[OrdersController::class, 'deleteProductOrder']);
         Route::post('/delete/whole/order',[OrdersController::class, 'deleteOrder']);
     });
+    Route::post('Sell_Order', [PurchaseController::class, 'store']);
+    
 });

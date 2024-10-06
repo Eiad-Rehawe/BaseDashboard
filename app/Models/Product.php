@@ -45,6 +45,9 @@ class Product extends Model
         return $this->hasMany(Rating::class);
     }
 
+    public function size() {
+        return $this->belongsTo(Size::class, 'size_id');
+    }
     public function favs()
     {
         return $this->hasMany(Favourite::class);

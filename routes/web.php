@@ -11,7 +11,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-
+use App\Http\Controllers\SizeController;
 
 
 
@@ -31,7 +31,8 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 |
 */
 
-Route::middleware(['localeSessionRedirect', 'localizationRedirect', 'localeViewPath'])->group(function () {
+Route::middleware(['localeSessionRedirect', 'localizationRedirect', 'localeViewPath'])->group(function () 
+{
   Route::get('/product/{id}',[FrontController::class, 'get_product'])->name('front.product');
 
   Route::get('/check-product', [FrontController::class, 'checkProduct']);

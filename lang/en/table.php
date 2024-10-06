@@ -106,5 +106,6 @@ return [
     'avg_rate'=>'average ratings',
     'barcode_id'=>'BarcodeId',
     'comment'=>'Comment',
-    'pendding'=>'Pendding'
+    'pendding'=>'Pendding',
+    'Size'=>'Size'
 ];

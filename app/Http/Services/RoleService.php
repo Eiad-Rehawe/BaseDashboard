@@ -15,7 +15,7 @@ class RoleService{
 
          DB::beginTransaction();
         $request['guard_name'] = 'admin';
-        $row = Role::updateOrCreate(['id' => $id], $request);
+        $row = Role::updateOrCreate(['id' => $id], $request);   
         $permissions = Permission::whereIn('id', $request['permission_id'] ?? [])->pluck('id');
         $row->syncPermissions($permissions ?? []);
 

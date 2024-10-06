@@ -24,7 +24,8 @@
         "twilio/sdk": "*",
         "yajra/laravel-datatables": "10.0",
         "yajra/laravel-datatables-buttons": "*",
-        "yajra/laravel-datatables-html": "*"
+        "yajra/laravel-datatables-html": "*",
+        "yajra/laravel-datatables-oracle": "^10.11"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

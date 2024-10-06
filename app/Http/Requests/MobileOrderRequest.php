@@ -22,45 +22,39 @@ class MobileOrderRequest extends FormRequest
      */
     public function rules(): array
     {
-        $pp = [];
-        foreach (request()->product_id as $p) {
-            array_push($pp, $p);
+        $productIds = request()->input('product_id', []);
+    $quantities = request()->input('qty', []);
 
-        }
-        $products = Product::whereIn('id', (array) $pp)->pluck('quantity')->toArray();
-       
-        return [
-            'first_name'=>'required|string',
-            'last_name'=>'required|string',
-            'phone'=>'required|regex:/(0)[0-9]{9}/',
-            'email'=>'required|email',
-            'address_1'=>'required',
-            'address_2'=>'nullable',
-            'country'=>'required',
-            'city'=>'required',
-            'notes'=>'nullable',
-            'product_id'=>'required|exists:products,id',
-            'user_id'=>'exists:users,id',
-            'code'=>'nullable|exists:coupons,code',
-            'qty'=>['array','min:1'
-            , function ($attribute, $value, $fail) use ($products) {
-                
-               if($products){
-                for($i=0; $i<count($products); $i++){
+    $products = Product::whereIn('id', $productIds)->pluck('quantity', 'id')->toArray();
 
-                    if ($value[$i] > $products[$i]) {
-                        $fail(__('messages.The quantity exceeds the available stock'));
+    return [
+        'first_name' => 'required|string',
+        'last_name' => 'required|string',
+        'phone' => 'required|regex:/(0)[0-9]{9}/',
+        'province' => 'required',
+        'region' => 'required',
+        'address' => 'required',
+        'notes' => 'nullable',
+        'product_id' => 'required|array',
+        'product_id.*' => 'required|integer|exists:products,id', 
+        'qty' => [
+            'required',
+            'array',
+            'min:1',
+            function ($attribute, $value, $fail) use ($products, $productIds, $quantities) {
+                foreach ($productIds as $index => $productId) {
+
+                    if (isset($products[$productId]) && $quantities[$index] > $products[$productId]) {
+                        $fail(__('messages.The quantity exceeds the available stock for product ID: ' . $productId));
+                    } elseif (!isset($products[$productId])) {
+                        $fail(__('messages.product_not_found for product ID: ' . $productId));
                     }
                 }
-              
-               }
-               else{
-                $fail(__('messages.product_not_found'));
-               }
             }
-            ]
-            
-        ];
+        ],
+        'user_id' => 'exists:users,id',
+        'code' => 'nullable',
+    ];
     }
 
     public function messages()

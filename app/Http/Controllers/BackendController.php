@@ -223,39 +223,32 @@ class BackendController extends Controller
     public function MultiDelete(Request $request)
     {
         try {
-          
+            
             if ($request->segment(3) == "categories") {
                 $rows = $this->model::whereIn('id', (array) $request['id'])->orWhereIn('parent_id',(array) $request['id'])->get();
-              
+
                 foreach ($rows as $row) {
                     $products = $row->products;
                     $cat_name = $row->name_.app()->getLocale();
                     if (count($products) == 0) {
-                     
                         // $rows = $this->model::whereIn('id', (array) $request['id'])->delete();
-                       $childs = $row->children;
-                       if(count($childs) > 0){
+                        $childs = $row->children;
+                        if(count($childs) > 0){
                         foreach($childs as $child){
                             if(count($child->products) == 0){
-                              
                                 $child->delete();
                                 $row->delete();
                             }
-                       }
-                      
-                       }else{
+                        }
+                    }else{
                         $row->delete();
-                       }
-               
+                    }
 
                     }else{
                         return response()->json(['title' => __('messages.error'), 'message' => __('messages.this category has products'), 'status' => 'error']);
 
                     }
-
-                   
                 }
-           
                 // $this->model::whereIn('id', (array) $request['id'])->delete();
             }elseif(request()->segment(3) == 'roles'){
                 $rows = $this->model::whereIn('id', (array) $request['id'])->whereHas('admin')->get();

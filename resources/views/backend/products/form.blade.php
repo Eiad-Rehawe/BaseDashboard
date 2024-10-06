@@ -39,12 +39,24 @@
         <div id="input-quantity" style="color: red"></div>
 
       </div>
-      <div class="mb-3 col-md-3">
+      {{-- <div class="mb-3 col-md-3">
         <label for="quantity">{{ __('table.barcode_id') }}</label>
         <input type="text" class="form-control" placeholder="{{ __('table.barcode_id') }}" name="barcode_id"
           value="{{ $row->barcode_id ?? old('barcode_id') }}" />
         <div id="input-barcode_id" style="color: red"></div>
 
+      </div> --}}
+      <div class="mb-3 col-md-3">
+        <label for="size">{{__('table.Size')}}</label>
+        <select name="size_id" class="select2 form-control custom-select">
+          <option></option>
+          <optgroup label="">
+            @foreach ($sizes as $size)
+              <option value="{{$size->id}}" {{isset($row) ? ($row->size_id == $size->id ? 'selected' : 
+              '') :(old('id')) }}>{{$size->size }}</option>
+            @endforeach
+          </optgroup>
+        </select>
       </div>
       
       <div class="mb-3 col-md-3">

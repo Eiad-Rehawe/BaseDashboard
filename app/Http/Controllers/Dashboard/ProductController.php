@@ -11,6 +11,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Product;
+use App\Models\Size;
 use App\Models\WeightMeasurement;
 use App\Traits\uploadImage;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -52,9 +53,8 @@ class ProductController extends BackendController
    
         return[
             'rows' => (new Category())->getDataAsLang()->where('status', 1)->get(),
-
-           'w_ms'=>(new WeightMeasurement())->getDataAsLang()->get(),
-          
+            'w_ms'=>(new WeightMeasurement())->getDataAsLang()->get(),
+            'sizes'=>Size::all(),
         ];
     }
 
@@ -66,10 +66,12 @@ class ProductController extends BackendController
      */
     public function store(ProductRequest $request, ProductService $service)
     {
-      
         try {
             $row = $service->handle($request->all());
             if (is_string($row)) return $this->throwException($row);
+            $row->size_id = $request->input('size_id');
+            $row->save();
+
             return response()->json(['title' => 'success', 'message' => 'create success', 'status' => 'success', 'redirect' => route('backend.products.index')]);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
@@ -88,15 +90,16 @@ class ProductController extends BackendController
         try {
             $row = $service->handle($request->all(),$id);
             if (is_string($row)) return $this->throwException($row);
-            return response()->json(['title' => 'success', 'message' => 'update success', 'status' => 'success', 'redirect' => route('backend.products.index')]);     
-        
+            $row->size_id = $request->input('size_id');
+            $row->save();
+
+            return response()->json(['title' => 'success', 'message' => 'update success', 'status' => 'success', 'redirect' => route('backend.products.index')]);
         }
         catch(\Exception $e){
             return response()->json($e->getMessage(), 500);
         }
     }
 
-  
     public function qr_code_generate(Request $request,$id)
     {
         try {
@@ -114,7 +117,4 @@ class ProductController extends BackendController
             return response()->json($e->getMessage(), 500);
         }
     }
-
-   
-    
 }

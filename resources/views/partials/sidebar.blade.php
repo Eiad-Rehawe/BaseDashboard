@@ -75,6 +75,14 @@
       </a>
     </li>
     @endif
+    <li class="sidebar-item">
+      <a class="sidebar-link" href="{{route('backend.sizes.index')}}" aria-expanded="false">
+        <span>
+          {{-- <i class="ti ti-Sizes"></i> --}}
+        </span>
+        <span class="hide-menu">{{ __('sidebar.sizes') }}</span>
+      </a>
+    </li>
     @if(auth()->user('admin')->can('Display Offers') || auth()->user('admin')->can('عرض العروض'))
     <li class="sidebar-item">
       <a class="sidebar-link" href="{{route('backend.offers.index')}}" aria-expanded="false">

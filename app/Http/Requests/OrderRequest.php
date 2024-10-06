@@ -59,91 +59,82 @@ class OrderRequest extends FormRequest
      */
     public function rules()
     {
-
-        if (request()->route()->getActionMethod() == 'storeOrder') {
-            $product_id = explode(',', request()->input('product_id'));
-
-            $products = Product::whereIn('id', $product_id)->get();
-            $product_ = '';
-
-            foreach ($products as $product) {
-                // $product = $product_;
-                $product_ = $product;
-            }
-            $product = Product::findOrFail(request()->input('product_id'));
-            return [
-                'first_name' => 'required|string|regex:/^[a-zA-Z0-9]+$/',
-                'last_name' => 'required|string|regex:/^[a-zA-Z0-9]+$/',
-                'phone' => 'required|regex:/(0)[0-9]{9}/',
-                'email' => 'required|email',
-                'address_1' => 'required|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
-                'address_2' => 'nullable|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
-                'city' => 'required|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
-                'notes' => 'nullable|regex:/^[a-zA-Z0-9]+$/',
-                'user_id' => 'exists:users,id',
-                'coupon' => 'nullable|exists:coupons,code',
-                'qty' => ['min:1', function ($attribute, $value, $fail) use ($product) {
-                    if ($product) {
-                        if ($value > $product->quantity) {
-
-                            $fail(__('messages.The quantity exceeds the available stock'));
+        $method = request()->route()->getActionMethod();
+    
+        switch ($method) {
+            case 'storeOrder':
+                return [
+                    'first_name' => 'required|string|regex:/^[a-zA-Z0-9]+$/',
+                    'last_name' => 'required|string|regex:/^[a-zA-Z0-9]+$/',
+                    'phone' => 'required|regex:/(0)[0-9]{9}/',
+                    'email' => 'required|email',
+                    'address_1' => 'required|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
+                    'address_2' => 'nullable|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
+                    'city' => 'required|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
+                    'notes' => 'nullable|regex:/^[a-zA-Z0-9]+$/',
+                    'user_id' => 'exists:users,id',
+                    'coupon' => 'nullable|exists:coupons,code',
+                    
+                    'product_id' => 'required|array',
+                    'product_id.*' => 'required|integer|exists:products,id',
+                    'qty' => [
+                        'required', 'array', 'min:1',
+                        function ($attribute, $value, $fail) {
+                            $index = explode('.', $attribute)[1]; // استخلاص الـ index
+                            $product = Product::find(request()->product_id[$index]); // البحث عن المنتج المطابق
+                            if ($product && $value > $product->quantity) {
+                                $fail(__('messages.The quantity exceeds the available stock'));
+                            }
                         }
-                    } else {
-                        $fail(__('messages.product_not_found'));
-                    }
-                }],
-            ];
-        }
-        if (request()->route()->getActionMethod() == 'updateOrder') {
-            $product_id = explode(',', request()->input('product_id'));
-
-            $products = Product::whereIn('id', $product_id)->get();
-            $product_ = '';
-
-            foreach ($products as $product) {
-                // $product = $product_;
-                $product_ = $product;
-            }
-            $product = Product::findOrFail(request()->input('product_id'));
-            return [
-                'id' => 'required|exists:orders,id',
-                'phone' => 'required|regex:/(0)[0-9]{9}/',
-                'email' => 'required|email',
-                'address_1' => 'required|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
-                'notes' => 'nullable|regex:/^[a-zA-Z0-9]+$/',
-                'qty' => ['min:1', function ($attribute, $value, $fail) use ($product) {
-                    if ($product) {
-                        if ($value > $product->quantity) {
-
-                            $fail(__('messages.The quantity exceeds the available stock'));
+                    ],
+                ];
+    
+            case 'updateOrder':
+                return [
+                    'first_name' => 'required|string|regex:/^[a-zA-Z0-9]+$/',
+                    'last_name' => 'required|string|regex:/^[a-zA-Z0-9]+$/',
+                    'phone' => 'required|regex:/(0)[0-9]{9}/',
+                    'email' => 'required|email',
+                    'address_1' => 'required|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
+                    'address_2' => 'nullable|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
+                    'city' => 'required|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
+                    'notes' => 'nullable|regex:/^[a-zA-Z0-9]+$/',
+                    'user_id' => 'exists:users,id',
+                    'coupon' => 'nullable|exists:coupons,code',
+                    'qty' => [
+                        'required', 'min:1',
+                        function ($attribute, $value, $fail) {
+                            $product = Product::find(request()->input('product_id')); // البحث عن المنتج
+                            if ($product && $value > $product->quantity) {
+                                $fail(__('messages.The quantity exceeds the available stock'));
+                            } elseif (!$product) {
+                                $fail(__('messages.product_not_found'));
+                            }
                         }
-                    } else {
-                        $fail(__('messages.product_not_found'));
-                    }
-                }],
-            ];
-        }
-        if (request()->route()->getActionMethod() == 'addProductsToOrder') {
-            return [
-                // 'product_id' => 'required',
-                'qty' => ['min:1',
-                ],
-            ];
-        }
-        if (request()->route()->getActionMethod() == 'deleteProductOrder') {
-            return [
-                'order_id' => 'required|integer|exists:orders,id',
-                'product_id' => 'required|integer|exists:order_details,product_id',
-            ];
-
-        }
-        if (request()->route()->getActionMethod() == 'deleteOrder') {
-            return [
-                'order_id' => 'required|integer|exists:orders,id',
-
-            ];
+                    ],
+                ];
+    
+            case 'addProductsToOrder':
+                return [
+                    'qty' => 'required|array|min:1',
+                ];
+    
+            case 'deleteProductOrder':
+                return [
+                    'order_id' => 'required|integer|exists:orders,id',
+                    'product_id' => 'required|integer|exists:order_details,product_id',
+                ];
+    
+            case 'deleteOrder':
+                return [
+                    'order_id' => 'required|integer|exists:orders,id',
+                ];
+                
+            default:
+                return [];
         }
     }
+    
 
     public function messages()
     {

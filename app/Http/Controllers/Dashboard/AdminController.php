@@ -12,7 +12,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Permission;    
 
 class AdminController extends BackendController
 {
@@ -54,7 +54,7 @@ class AdminController extends BackendController
             return response()->json(['title' => __('messages.success'), 'message' => __('messages.saved success'), 'status' => 'success', 'redirect' => route('backend.admins.index')]);
 
         }catch(\Exception $e){
-            return response()->json($e->getMessage(),500);
+            return response()->json($e->getMessage(),200);
         }
     }
 
