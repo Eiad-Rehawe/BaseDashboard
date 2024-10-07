@@ -101,110 +101,58 @@ class BackendController extends Controller
 
             if (request()->segment(3)== 'categories') {
                 $products = $row->products;
-          
-            //     if (isset($products)) {
 
-            //         foreach ($products as $product) {
-                        
-            //             if($product->ordes->count() == 0){
-            //                 if (isset($product->images)) {
-            //                     foreach ($product->images as $img) {
-    
-            //                         $img->delete();
-            //                     }
-            //                 }
-            //                 $product->delete();
-
-            //                }
-            //         }
-            //     }
-
-            //     if (isset($row->images)) {
-            //         foreach ($row->images as $img) {
-
-            //             $img->delete();
-            //         }
-            //     }
-            //     $row->products()->delete();
-            //     $row->delete();
-            //     $data =Category::where('id',$id)->orWhere('parent_id',$id)->get();
-                
-            //    if(isset($data)){
-            //     foreach($data as $d){
-            //         foreach($d->products as $p){
-            //             if(isset($p->files)){
-            //                 foreach($p->files as $f){
-            //                     $f->delete();
-            //                 }
-            //             }
-            //             $d->products()->delete();
-            //         }
-            //         if(isset($d->files)){
-            //             foreach($d->files as $fd){
-            //                 $fd->delete();
-            //             }
-            //         }
-            //         $d->delete();
-            //     }
-            //    }
-             if(count($products) > 0){
-                return response()->json(['title' => __('messages.error'), 'message' => __('messages.this category has products'), 'status' => 'error']);
-
-             }else{
-                if(count($row->children) > 0){
-                   $childs =  $row->children;
-                   foreach($childs as $child){
-                    if(count($child->products) == 0 ){
-                        $row->delete();
-                        $child->delete();
-
-                    }else{
-                        return response()->json(['title' => __('messages.error'), 'message' => __('messages.this category has products'), 'status' => 'error']);
-
+                if(count($products) > 0){
+                    return response()->json(['title' => __('messages.error'), 'message' => __('messages.this category has products'), 'status' => 'error']);
+                }
+                else{
+                    if(count($row->children) > 0){
+                        $childs =  $row->children;
+                        foreach($childs as $child){
+                            if(count($child->products) == 0 ){
+                                $row->delete();
+                                $child->delete();
+                            }
+                            else{
+                                return response()->json(['title' => __('messages.error'), 'message' => __('messages.this category has products'), 'status' => 'error']);
+                            }
                     }
-                   }
-                }else{
+                    }else{
+                        $row->delete();
+                    }
+                }
+            }
+            elseif(request()->segment(3) == 'products'){
+                if($row->orders->count() != 0 || $row->comments->count() !=0){
+                    return response()->json(['title' => __('messages.error'), 'message' => __('messages.product_has_orders_or_comments'), 'status' => 'error']);
+                } 
+                else{
+                    $row->files()->delete();
                     $row->delete();
                 }
-                
-             }
-
-            } elseif(request()->segment(3) == 'products'){
-               
-              
-                if($row->orders->count() != 0 || $row->comments->count() !=0){
-             
-                return response()->json(['title' => __('messages.error'), 'message' => __('messages.product_has_orders_or_comments'), 'status' => 'error']);
-                } 
-                   else{
-                        $row->files()->delete();
-                        $row->delete();
-                       }
             }
-            elseif(request()->segment(3) == 'roles'){
-               $role = Role::where('id',$id)->whereHas('admin')->first();
-      
-                    if($role){
-                        return response()->json(['title' => __('messages.error'), 'message' => __('messages.role_has_admins'), 'status' => 'error']);
+            elseif(request()->segment(3) == 'roles')
+            {
+                $role = Role::where('id',$id)->whereHas('admin')->first();
 
-                    }
-                
+                if($role){
+                    return response()->json(['title' => __('messages.error'), 'message' => __('messages.role_has_admins'), 'status' => 'error']);
+                }
+                else {
+                    $row->delete();
+                }
             }
             else {
                 if (isset($row->images)) {
                     foreach ($row->images as $img) {
-
                         $img->delete();
                     }
                 }
                 $row->delete();
             }
-
             return response()->json(['title' => __('messages.success'), 'message' => __('messages.delete success'), 'status' => 'success']);
-        } catch (\Exception $e) {
-             return response()->json($e->getMessage(), 500);
-
-
+        }catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
         }
     }
 
@@ -250,7 +198,9 @@ class BackendController extends Controller
                     }
                 }
                 // $this->model::whereIn('id', (array) $request['id'])->delete();
-            }elseif(request()->segment(3) == 'roles'){
+            }
+            elseif (request()->segment(3) == 'roles')
+            {
                 $rows = $this->model::whereIn('id', (array) $request['id'])->whereHas('admin')->get();
                 if($rows){
                     return response()->json(['title' => __('messages.error'), 'message' => __('messages.role_has_admins'), 'status' => 'error']);
@@ -259,14 +209,14 @@ class BackendController extends Controller
                     $rows = $this->model::whereIn('id', (array) $request['id'])->delete();
                 }
             }
-             elseif(request()->segment(3) == 'products'){
+            elseif(request()->segment(3) == 'products'){
                 $rows = $this->model::whereIn('id', (array) $request['id'])->get();
                     foreach($rows as $product){
                         $product_name = $product->name_.app()->getLocale();
                         $product->files()->delete();
-                      
+                    
                 if($product->orders->count() != 0 || $product->comments->count() !=0){
-             
+            
                     return response()->json(['title' => __('messages.error'), 'message' => __('messages.product_has_orders_or_comments'), 'status' => 'error']);
                     }
                     }

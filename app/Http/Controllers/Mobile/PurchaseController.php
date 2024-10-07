@@ -76,9 +76,9 @@ class PurchaseController extends Controller
                     'price' => $request->price,
                     'image' => $imageName
                 ]);
+                return $this->returnSuccess(__('messages.saved success'), 200);
             }
-    
-            return $this->returnSuccess(__('messages.saved success'), 200);
+            return $this->returnError(__('messages.Error file'),500);
     
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);

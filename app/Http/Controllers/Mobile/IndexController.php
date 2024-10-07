@@ -38,7 +38,7 @@ class IndexController extends Controller
         try {
             $lang = request()->header('Accept-Language');
             $data = (new Product())
-                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", "size_id")
+                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
                 ->with('files')
                 ->with('weight_measurement', function ($q) use ($lang) {
                     $q->select('id', "name_$lang as name");
@@ -51,20 +51,27 @@ class IndexController extends Controller
                     $q->select('product_id', DB::raw('AVG(rating) as rating'))
                         ->groupBy('product_id');
                 })
-                ->with('size:id,size')
+                ->with('size:size')
                 ->where('status', 1)
                 ->orderBy('id', 'desc')
                 ->get();
     
-            $filteredData = $data->map(function ($product) {
-                $productArray = $product->toArray();
-                foreach ($productArray as $key => $value) {
-                    if (is_array($value) && empty($value)) {
-                        unset($productArray[$key]);
+                $filteredData = $data->map(function($product) {
+                    $productArray = $product->toArray();
+                
+                    if (isset($productArray['size']) && !empty($productArray['size'])) {
+                        $productArray['size'] = collect($productArray['size'])->pluck('size')->toArray();
+                    } else {
+                        unset($productArray['size']);
                     }
-                }
-                return $productArray;
-            });
+                
+                    foreach ($productArray as $key => $value) {
+                        if (is_array($value) && empty($value)) {
+                            unset($productArray[$key]);
+                        }
+                    }
+                    return $productArray;
+                });
 
             return response()->json(['status' => true, 'data' => $filteredData], 200);
         } catch (\Exception $e) {
@@ -78,7 +85,7 @@ class IndexController extends Controller
             $lang = request()->header('Accept-Language');
 
             $data = (new Product())
-            ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption",'size_id')
+            ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
             ->with('files')
             ->with('weight_measurement', function ($q) use ($lang) {
                 $q->select('id', "name_$lang as name");
@@ -92,7 +99,7 @@ class IndexController extends Controller
                 $q->select('product_id', DB::raw('AVG(rating) as rating'))
                     ->groupBy('product_id');
             })
-            ->with('size:id,size')
+            ->with('size:size')
             ->where('status', 1)
             ->when($categoryId, function ($q) use ($categoryId) {
                 return $q->where('category_id', $categoryId); // تصفية بناءً على category_id إذا تم تمريره
@@ -100,9 +107,15 @@ class IndexController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-            // معالجة البيانات لإزالة الحقول الفارغة
-            $filteredData = $data->map(function ($product) {
+            $filteredData = $data->map(function($product) {
                 $productArray = $product->toArray();
+            
+                if (isset($productArray['size']) && !empty($productArray['size'])) {
+                    $productArray['size'] = collect($productArray['size'])->pluck('size')->toArray();
+                } else {
+                    unset($productArray['size']);
+                }
+            
                 foreach ($productArray as $key => $value) {
                     if (is_array($value) && empty($value)) {
                         unset($productArray[$key]);
@@ -154,7 +167,7 @@ class IndexController extends Controller
         try {
             $lang = request()->header('Accept-Language');
             $data = (new Product())
-                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption",'size_id')
+                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
                 ->with('files')->with('weight_measurement', function ($q) use ($lang) {
                 $q->select('id', "name_$lang as name");
             })->with('category', function ($q) use ($lang) {
@@ -166,17 +179,25 @@ class IndexController extends Controller
                     $q->select('product_id', DB::raw('AVG(rating) as rating'))
                         ->groupBy('product_id');
             })
-                ->with('size:id,size')
+                ->with('size:size')
                 ->where('status', 1)->orderBy('id', 'desc')->take(10)->latest()->get();
-            $filteredData = $data->map(function ($product) {
-                $productArray = $product->toArray();
-                foreach ($productArray as $key => $value) {
-                    if (is_array($value) && empty($value)) {
-                        unset($productArray[$key]);
+                
+                $filteredData = $data->map(function($product) {
+                    $productArray = $product->toArray();
+                
+                    if (isset($productArray['size']) && !empty($productArray['size'])) {
+                        $productArray['size'] = collect($productArray['size'])->pluck('size')->toArray();
+                    } else {
+                        unset($productArray['size']);
                     }
-                }
-                return $productArray;
-            });
+                
+                    foreach ($productArray as $key => $value) {
+                        if (is_array($value) && empty($value)) {
+                            unset($productArray[$key]);
+                        }
+                    }
+                    return $productArray;
+                });
 
             return response()->json(['status' => true, 'data' => $filteredData], 200);
         } catch (\Exception $e) {
@@ -195,17 +216,6 @@ class IndexController extends Controller
                         $q->select('id', "name_$lang as name", 'parent_id');
                     });
             }])->whereNull('price_discount')->whereNull('product_id')
-            // ->whereHas('product',function($q) use($lang){
-            //     $q->select('id',"name_$lang as name", 'wight','category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
-            //     ->with('files')->with('ratings',function($q){
-            //         $q->select('product_id',DB::raw('AVG(rating) as rating'))
-            //         ->groupBy('rating','product_id');
-            //     })->with('category',function($q)use($lang){
-            //         $q->select('id',"name_$lang as name",'parent_id')->with('parent',function($q) use($lang){
-            //             $q->select('id',"name_$lang as name");
-            //         });
-            //     });
-            // })
                 ->where('status', 1)->get();
             return $this->returnData($data, true, 200);
         } catch (\Exception $e) {
@@ -219,7 +229,7 @@ class IndexController extends Controller
             $lang = request()->header('Accept-Language');
 
             $data = Poster::select('id', 'product_id', 'price_discount')->with(['product' => function ($q) use ($lang) {
-                $q->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", 'size_id')
+                $q->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
                     ->with('files')->with('ratings', function ($q) {
                     $q->select('product_id', DB::raw('AVG(rating) as rating'))
                         ->groupBy('rating', 'product_id');
@@ -227,15 +237,33 @@ class IndexController extends Controller
                     $q->select('id', "name_$lang as name", 'parent_id')->with('parent', function ($q) use ($lang) {
                         $q->select('id', "name_$lang as name");
                     });
-                });
-                $q->with('weight_measurement', function ($q) use ($lang) {
+                })
+                ->with('weight_measurement', function ($q) use ($lang) {
                     $q->select('id', "name_$lang");
-                });
-                $q->with('size:id,size');
+                })
+                ->with('size:size');
             }])
                 ->whereNull('Percentage_discount')->whereNull('category_id')
                 ->where('status', 1)->get();
-            return $this->returnData($data, true, 200);
+
+                $filteredData = $data->map(function($product) {
+                    $productArray = $product->toArray();
+                
+                    if (isset($productArray['size']) && !empty($productArray['size'])) {
+                        $productArray['size'] = collect($productArray['size'])->pluck('size')->toArray();
+                    } else {
+                        unset($productArray['size']);
+                    }
+                
+                    foreach ($productArray as $key => $value) {
+                        if (is_array($value) && empty($value)) {
+                            unset($productArray[$key]);
+                        }
+                    }
+                    return $productArray;
+                });
+                
+            return $this->returnData($filteredData, true, 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -255,7 +283,7 @@ class IndexController extends Controller
         try {
             $lang = request()->header('Accept-Language');
             $data = (new Product())
-                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", 'size_id')
+                ->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
                 ->with('files')->with('ratings', function ($q) {
                 $q->select('product_id', DB::raw('AVG(rating) as rating'))
                     ->groupBy('rating', 'product_id');
@@ -265,12 +293,21 @@ class IndexController extends Controller
                 });
             })->where('id', $id)->where('status', 1)->with('weight_measurement', function ($q) use ($lang) {
                 $q->select('id', "name_$lang");
-            })->with('size:id,size')->first();
-
+            })->with('size:size')->first();
+            
             if (!$data) {
                 return $this->returnError(__('messages.not_found'), 404);
             }
-            return $this->returnData($data, true, 200);
+            
+            $productArray = $data->toArray();
+            
+                if (isset($productArray['size']) && !empty($productArray['size'])) {
+                    $productArray['size'] = collect($productArray['size'])->pluck('size')->toArray();
+                } else {
+                    unset($productArray['size']);
+                }
+
+            return $this->returnData($productArray, true, 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -322,7 +359,7 @@ class IndexController extends Controller
         try {
             $lang = $request->header('Accept-Language');
             
-            $products = Product::select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", 'size_id')
+            $products = Product::select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
                 ->Filter()
                 ->with('files')
                 ->with('weight_measurement', function ($q) use ($lang) {
@@ -338,7 +375,7 @@ class IndexController extends Controller
                         $q->select('id', "name_$lang as name");
                     });
                 })
-                ->with('size:id,size')
+                ->with('size:size')
                 ->where('status', 1);
     
             if ($request->filled('category_id')) {
@@ -350,8 +387,23 @@ class IndexController extends Controller
             }
     
             $data = $products->get();
+            $filteredData = $data->map(function($product) {
+                $productArray = $product->toArray();
             
-            return $this->returnData($data, true, 200);
+                if (isset($productArray['size']) && !empty($productArray['size'])) {
+                    $productArray['size'] = collect($productArray['size'])->pluck('size')->toArray();
+                } else {
+                    unset($productArray['size']);
+                }
+            
+                foreach ($productArray as $key => $value) {
+                    if (is_array($value) && empty($value)) {
+                        unset($productArray[$key]);
+                    }
+                }
+                return $productArray;
+            });
+            return $this->returnData($filteredData, true, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -678,8 +730,5 @@ private function applyCoupon($code, $total)
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
-    }
-    public function SellProduct(Request $request) {
-        
     }
 }

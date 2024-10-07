@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Size extends Model
+class PrintSize extends Model
 {
     use HasFactory;
 
-    public function products() {
-        return $this->belongsToMany(Product::class, 'product_sizes');
+    public function PrintOrder(){
+        return $this->belongsTo(PrintOrder::class,);
     }
 }

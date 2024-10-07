@@ -8,7 +8,6 @@
 
 <div class="card">
     <div class="card-body wizard-content">
-      
 
         @isset($row)
         

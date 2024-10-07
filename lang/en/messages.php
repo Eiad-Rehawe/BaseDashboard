@@ -45,9 +45,9 @@ return [
     'password_reset'=>'Password reset success',
     'role_has_admins'=>'Role Has Employee',
     'product_has_orders_or_comments'=>'This Product May Has Orders Or Comments',
-    'this category has products'=>'This Category Has Products',
     'Add To Favourite Successfully'=>'Add To Favourite Successfully',
     'Remove From Favourite Successfully'=>'Remove From Favourite Successfully',
-    'you_cant_edit_this_order'=>'You Cant Edit This Order'
+    'you_cant_edit_this_order'=>'You Cant Edit This Order',
+    'Error file' => 'Error in upload a file',
 
 ];

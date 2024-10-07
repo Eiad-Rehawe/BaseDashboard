@@ -46,7 +46,7 @@ class Product extends Model
     }
 
     public function size() {
-        return $this->belongsTo(Size::class, 'size_id');
+        return $this->belongsToMany(Size::class, 'product__sizes');
     }
     public function favs()
     {

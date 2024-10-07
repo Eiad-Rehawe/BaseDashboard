@@ -46,8 +46,8 @@ return [
     'password_reset'=>'تم تغيير كلمة المرور بنجاح',
     'role_has_admins'=>'الوظيفة تتضمن موظفين',
     'product_has_orders_or_comments'=>'هذا المنتج يحوي طلبات او تعليقات للمستخدمين',
-    'this category has products'=>'هذ القسم يحوي منتجات',
     'Add To Favourite Successfully'=>'تمت الإضافة إلى المفضلة بنجاح',
     'Remove From Favourite Successfully'=> 'تمت  الإزالة من المفضلة بنجاح',
-    'you_cant_edit_this_order'=>'لا تستطيع تعديل هذا الطلب'
+    'you_cant_edit_this_order'=>'لا تستطيع تعديل هذا الطلب',
+    'Error file' => 'خطأ في تحميل الملف ',
 ];

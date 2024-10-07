@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Mobile\MaintenanceOrderController;
 use App\Http\Controllers\Mobile\AuthenticatController;
 use App\Http\Controllers\Mobile\ForgotPasswordController;
 use App\Http\Controllers\Mobile\IndexController ;
 use App\Http\Controllers\Mobile\OrdersController;
+use App\Http\Controllers\Mobile\PrintOrderController;
 use App\Http\Controllers\Mobile\PurchaseController;
+use App\Models\PrintOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -65,5 +68,6 @@ Route::group(['middleware'=>'Localization'],function(){
         Route::post('/delete/whole/order',[OrdersController::class, 'deleteOrder']);
     });
     Route::post('Sell_Order', [PurchaseController::class, 'store']);
-    
+    Route::post('Print',[PrintOrderController::class, 'addPrintOrder']);
+    Route::post('Maintenance',[MaintenanceOrderController::class, 'addMaintenanceOrder']);
 });

@@ -23,19 +23,19 @@ class UsersDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-           
-           ->editColumn('created_at',function($query){
+
+        ->editColumn('created_at',function($query){
             return $query->created;
-           })
-           ->editColumn('updated_at',function($query){
+        })
+        ->editColumn('updated_at',function($query){
             return $query->created;
-           })
+        })
         //    ->addColumn('ckeckbox',function($query){
         //     return '<input id="checkbox" name="id[]" type="checkbox" value="'.$query->id.'">';
         //    })
-           ->editColumn('gender',function($query){
+        ->editColumn('gender',function($query){
             return $query->gender();
-           })
+        })
             // ->editColumn('action',function($query){
             //     $row = $query;
             //     return view('backend.includes.buttons',compact('row'));
@@ -73,9 +73,8 @@ class UsersDataTable extends DataTable
                         Button::make('reload'),
                     ])
                     ->responsive(true);
-                   
     }
- 
+
     public function getColumns(): array
     {
         return [
