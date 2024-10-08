@@ -704,31 +704,49 @@ private function applyCoupon($code, $total)
     {
         try {
             $lang = request()->header('Accept-Language');
-
-            $fav = Favourite::where('user_id', auth()->id())->with('product')->first();
-            $data = Favourite::where('user_id', auth()->id())->with('product',function($q) use($lang){
-                $q-> select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption", 'size_id')
-                ->with('files')->with('ratings', function ($q) {
-                $q->select('product_id', DB::raw('AVG(rating) as rating'))
-                    ->groupBy('rating', 'product_id');
-            })
-            ->with('category', function ($q) use ($lang) {
-                $q->select('id', "name_$lang as name", 'parent_id')->with('parent', function ($q) use ($lang) {
+    
+            $data = Favourite::where('user_id', auth()->id())
+            ->with(['product' => function($q) use($lang) {
+                $q->select('id', "name_$lang as name", 'wight', 'category_id', 'weight_measurement_id', 'wight', 'selling_price', 'new_selling_price', 'quantity', "descrption_$lang as descrption")
+                ->with('files')
+                ->with('weight_measurement', function ($q) use ($lang) {
                     $q->select('id', "name_$lang as name");
-                });
-            })
-            ->where('status', 1)
-            ->with('weight_measurement', function ($q) use ($lang) {
-                $q->select('id', "name_$lang");
-            })
-            ->with('size:id,size');
-            })
-            ->orderBy('id', 'desc')->get();
+                })->with('category', function ($q) use ($lang) {
+                    $q->select('id', "name_$lang as name", 'parent_id')->with('parent', function ($q) use ($lang) {
+                        $q->select('id', "name_$lang as name");
+                    });
+                })
+                ->with('ratings', function ($q) {
+                    $q->select('product_id', DB::raw('AVG(rating) as rating'))
+                        ->groupBy('product_id');
+                })
+                ->with('size:size')
+                ->where('status', 1);
+                
+            }])->orderBy('id', 'desc')->get();
+            
+            
 
-            return $this->returnData($data, true, 200);
+            $filteredData = $data->map(function($product) {
+                $productArray = $product->toArray();
+            
+                $productArray['product']['size'] = collect($productArray['product']['size'])->pluck('size')->toArray();
+            
+                foreach ($productArray as $key => $value) {
+                    if (is_array($value) && empty($value)) {
+                        unset($productArray[$key]);
+                    }
+                }
+            
+                return $productArray;
+            });
+            
 
+            return $this->returnData($filteredData, true, 200);
+    
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
     }
+    
 }

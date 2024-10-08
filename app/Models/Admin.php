@@ -25,7 +25,8 @@ class Admin extends Authenticatable
         'password',
         'status',
         'address',
-        'phone'
+        'phone',
+        'role_id'
     ];
 
     /**
@@ -53,5 +54,8 @@ class Admin extends Authenticatable
         ? '<a href="'.route('backend.admins.status',[$this->id,'status']).'"class="btn btn-primary btn-sm toggle-class" title="'.__('table.update_status').'"> <span class="badge text-bg-primary"><i class="fa fa-toggle-on" aria-hidden="true"></i></span></a>'
         : '<a href="'.route('backend.admins.status',[$this->id,'status']).'"class="btn btn-warning toggle-class" title="'.__('table.update_status').'">  <span class="badge text-bg-warning"><i class="fa fa-toggle-off" aria-hidden="true"></i></span></a>';
 
+   }
+   public function role(){
+        return $this->belongsTo(Role::class);
    }
 }

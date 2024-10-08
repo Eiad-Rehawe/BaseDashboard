@@ -12,7 +12,6 @@ class AdminService
 
     public function handle($request, $id = null)
     {
-
         try {
 
             DB::beginTransaction();
@@ -23,16 +22,25 @@ class AdminService
                 unset($request['password']);
             }
 
-            $permissions = Permission::whereIn('id', $request['permission_id'] ?? [])->pluck('id');
             $row = Admin::updateOrCreate(['id' => $id], $request);
+            //     'name' =>$request->name,
+            //     'email'=>$request->email,
+            //     'password'=>$request->password,
+            //     'phone'=>$request->phone,
+            //     'address'=>$request->address,
+            //     'role_id'=>$request->role_id
+            // ]);
+            $permissions = Permission::whereIn('id', $request['permission_id'] ?? [])->pluck('id');
             $row->syncPermissions($permissions ?? []);
-            $role = Role::find($request['role']);
 
-            $row->assignRole($role);
+            // $role = Role::find($request['role']);
+            
+            // $row->roles()->sync([$role->id]);
+
+            // $row->assignRole($role);
             DB::commit();
             return $row;
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             return response()->json($e->getMessage(), 500);
         }

@@ -78,8 +78,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="name"> {{ __('table.role') }}</label>
-                               
-                                <select name="role" id="role" class="form-control required">
+                                <select name="role_id" id="role_id" class="form-control required">
                                     <option value="" ></option>
                                     @forelse($roles as $rr)
                                         <option value="{{ $rr->id }}" @isset($row)
@@ -89,15 +88,13 @@
                                         <option value="" disabled>{{ __('table.empty') }}</option>
                                     @endforelse
                                 </select>
-                               
-                          
+                            
                             <div id="input-role" style="color: red"></div>
 
                             </div>
                         </div>
 
                     </div>
-
                 </section>
                 <!-- Step 2 -->
                 <h6>{{ __('table.Step') }} 2</h6>
@@ -108,7 +105,7 @@
                         @isset($row)
                         <?php $data2_ = $row->permissions; ?>
                         @else
-                        <?php $data2_ = []; ?>
+                        <?php $data2_ = []; /*Illuminate\Support\Facades\DB::table('permissions')->get();*/ ?>
                         @endisset
                         
                     <div class="row" id="permissions">
@@ -142,6 +139,37 @@
 <script src="{{ asset('assets/dashboard/js/forms/form-wizard.js') }}"></script>
 
 <script>
+    // إعدادات الخطوات مع التحقق من الحقول قبل الانتقال للخطوة التالية
+    $(".validation-wizard").steps({
+        headerTag: "h6",
+        bodyTag: "section",
+        transitionEffect: "fade",
+        titleTemplate: '<span class="step">#index#</span> #title#',
+        labels: {
+            finish: "{{ __('Finish') }}",
+            next: "{{ __('Next') }}",
+            previous: "{{ __('Previous') }}"
+        },
+        onStepChanging: function (event, currentIndex, newIndex) {
+            // تحقق من المدخلات في الخطوة الحالية قبل الانتقال
+            if (currentIndex <script newIndex) {
+                var form = $(this);
+                form.validate().settings.ignore = ":disabled,:hidden";
+                return form.valid(); // لن ينتقل إلا إذا كانت جميع الحقول صحيحة
+            }
+            return true;
+        },
+        onFinishing: function (event, currentIndex) {
+            var form = $(this);
+            form.validate().settings.ignore = ":disabled";
+            return form.valid();
+        },
+        onFinished: function (event, currentIndex) {
+            $(".submit-form").submit();
+        }
+    });
+</script>
+{{-- <script>
     $('body').on('change','#role',function(e){
         e.preventDefault()
         var role_id = $(this).val()
@@ -149,19 +177,19 @@
         $.ajax({
                 url: window.location.origin+`/admin/admins_get/permissions?role_id=${role_id}`,
                 type: "get",
-               
+                
                 dataType: "json",
                 success:function(response){
-                    console.log(response.data2_)
-                    console.log(response.data)
+                    // console.log(response.data2_)
+                    //console.log(response.data)
                     $('#permissions').html(response.html)
-                },
-                error:function(error){
-                    console.log(error)
                 }
+                // error:function(error){
+                //     console.log(error)
+                // }
 
             })
     })
     
-</script>
+</script> --}}
 @endpush

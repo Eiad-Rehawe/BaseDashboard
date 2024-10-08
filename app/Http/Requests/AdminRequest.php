@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Admin;
+use DB;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AdminRequest extends FormRequest
@@ -21,36 +23,41 @@ class AdminRequest extends FormRequest
      */
     public function rules(): array
     {
-        
-        if(request()->route()->getActionMethod() == 'store'){
+        if(request()->route()->getActionMethod() == 'store')
+        {
+            return [
+                'name'=>'required',
+                'email'=>'required|email|unique:admins',
+                'role_id'=>'required',
+                'permission_id'=>'required',
+                'password'=>'required|string|min:8|max:64',
+                'phone'=>                'unique:admins,phone',
+            ];
+        }
+        if(request()->route()->getActionMethod() == 'update')
+        {
+            $adminId = route('admin');
+            return [
+                'name'=>'required',
+                'email'=>['required','email',Admin::unique('admins')->ignore($adminId)],
+                'role'=>'required',
+                'permission_id'=>'nullable',
+                'password'=>'required|string|min:8|max:64',
+            ];
+        }
+        if(request()->route()->getActionMethod() == 'update_password'){
+            return[
+                'email'=>'email|unique:admins,email,except,id',
+                'address'=>'string',
+                'phone'=>'string|unique:admins,phone,except,id'
+            ];
+        }
+    }
+    public function messages()
+    {
         return [
-            'name'=>'required',
-            'email'=>'required|email|unique:users,email,except,id',
-            'role'=>'required',
-            'permission_id'=>'required',
-            'password'=>'required|string|min:8|max:64',
-            'phone'=>                'unique:users,phone',
-            'email' => 'required_if:phone,=,null|nullable|email|unique:users,email,except,id',
+            'email.unique' => __('validation.unique'),
+            'phone.unique' => __('validation.unique')
         ];
-       } 
-       if(request()->route()->getActionMethod() == 'update'){
-        return [
-            'name'=>'required',
-            'email'=>'required|email|unique:users,email,except,id',
-            'role'=>'required',
-            'permission_id'=>'nullable',
-            // 'password'=>'required|string|min:8|max:64',
-
-          
-        ];
-       }
-       if(request()->route()->getActionMethod() == 'update_password'){
-       
-        return[
-            'email'=>'email|unique:admins,email,except,id',
-            'address'=>'string',
-            'phone'=>'string|unique:admins,phone,except,id'
-        ];
-       }
-    }    
+    }
 }

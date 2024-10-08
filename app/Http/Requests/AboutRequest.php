@@ -24,8 +24,7 @@ class AboutRequest extends FormRequest
         return [
             'descrption_ar'=>'required|string',
             'descrption_en'=>'required|string',
-
-            'image'=>'required',
+            'image'=>'required|image|mimes:jpeg,png,jpg,gif'
         ];
     }
 }

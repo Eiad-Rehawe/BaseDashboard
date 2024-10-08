@@ -24,7 +24,7 @@ class AdminsDataTable extends DataTable
         return (new EloquentDataTable($query))
            
          
-           ->addColumn('ckeckbox',function($query){
+           ->addColumn('ckeckbox',function($query){ 
             return '<input id="checkbox" name="id[]" type="checkbox" value="'.$query->id.'">';
            })
            ->addColumn('role',function($query){

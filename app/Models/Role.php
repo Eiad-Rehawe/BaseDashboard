@@ -16,9 +16,8 @@ class Role extends SpatieRole
       return $this->select('id',"name_$lang as name",'guard_name');
     }
 
-    public function admin()
+    public function admins()
     {
-      return $this->belongsToMany(Admin::class, 'model_has_roles', 'role_id', 'model_id');
-
+      return $this->hasMany(Admin::class);
     }
 }

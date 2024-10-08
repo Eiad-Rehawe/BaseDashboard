@@ -48,13 +48,12 @@ class AdminController extends BackendController
     public function store(AdminRequest $request,AdminService $service)
     {
         try{
-           
             $row = $service->handle($request->input());
             if (is_string($row)) return $this->throwException($row);
             return response()->json(['title' => __('messages.success'), 'message' => __('messages.saved success'), 'status' => 'success', 'redirect' => route('backend.admins.index')]);
 
         }catch(\Exception $e){
-            return response()->json($e->getMessage(),200);
+            return response()->json($e->getMessage(),500);
         }
     }
 
@@ -65,7 +64,7 @@ class AdminController extends BackendController
     public function update(AdminRequest $request,AdminService $service,$id)
     {
         try{
-           
+        
             $row = $service->handle($request->input(),$id);
             if (is_string($row)) return $this->throwException($row);
             return response()->json(['title' => __('messages.success'), 'message' => __('messages.saved success'), 'status' => 'success', 'redirect' => route('backend.admins.index')]);
@@ -94,14 +93,11 @@ class AdminController extends BackendController
         try {
             $data2_ = DB::table('permissions')
             ->join('languages','languages.id','=','permissions.lang_id')
-            ->join('role_has_permissions','role_has_permissions.permission_id','=','permissions.id')
             ->select('permissions.id','permissions.permission_id','permissions.name')
-            ->where('role_has_permissions.role_id',$request->role_id)
             ->where('languages.short_name',$request->segment(1))
             ->get();
-           $data= DB::table('permissions')->join('languages','languages.id','=','permissions.lang_id')->select('permissions.id','permissions.permission_id','permissions.name')
+            $data= DB::table('permissions')->join('languages','languages.id','=','permissions.lang_id')->select('permissions.id','permissions.permission_id','permissions.name')
                                             ->where('languages.short_name',$request->segment(1))->get();
-            // return response()->json(['permissions' =>$permissions]);
             return response()->json([
                 'data2_' =>$data2_,
                 'data'=>$data,
